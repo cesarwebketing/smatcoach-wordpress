@@ -12,6 +12,83 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 .col-100{
 	width:100% !important;
 }
+
+
+/* calendario*/
+.ajde_evcal_calendar .eventon_events_list .eventon_list_event {
+    width: 20%;
+    float: left;
+}
+.eventon_filter_dropdown {
+    display: block !important;
+    width: 80%;
+    margin-left: 20%;
+    margin-top: -52px !important;
+    border-radius: 0px !important;
+    -webkit-box-shadow: 0px 0px!important;
+    box-shadow: 0px 0px !important;
+}
+.eventon_sorting_section {
+    display: block !important;
+}
+.evo_sortby, .evo_srt_sel, .eventon_sf_field, .evo_sort_btn {
+    display: none !important;
+}
+.eventon_filter_dropdown p {
+    width: 25%;
+    float: left;
+    color: #fff !important;
+    padding: 17px !important;
+    font-size: 16px !important;
+    background-color: #6ACFEE;
+    text-align: center;
+}
+
+.eventon_filter_line {
+    border: 0px !important;
+    padding-left: 0px;
+    width: 100%;
+}
+.eventon_filter_selection { width: 100%;}
+
+.eventon_filter_line .eventon_filter {
+    width: 100%;
+}
+.eventon_filter_line .filtering_set_val {
+    width: 20%;
+    background-color: #009BDE !important;
+    font-style: normal !important;
+    text-align: center;
+    font-size: 16px;
+    padding: 14px 0px !important;
+    border-radius: 0px !important;
+}
+.eventon_filter_dropdown p:hover {
+    background-color: #009bde !important;
+}
+#evcal_list .eventon_list_event .evcal_desc span.evcal_event_title {
+    font-family: 'Lato', Helvetica, Arial, Lucida, sans-serif;
+    font-size: 16px;
+    text-transform: inherit;
+}
+.eventon_events_list .eventon_list_event .evcal_desc span.evcal_event_subtitle, .evo_pop_body .evcal_desc span.evcal_event_subtitle {
+    display: none;
+}
+.eventon_events_list .eventon_list_event .evcal_desc, .evo_pop_body .evcal_desc, #page-content p.evcal_desc {
+    padding: 3px 8px !important;
+    float: left !important;
+}
+.eventon_events_list .eventon_list_event .evcal_cblock, .evo_pop_body .evcal_cblock {
+    position: inherit !important;
+    float: right !important;
+}
+.eventon_events_list .eventon_list_event .evcal_cblock span, .evo_pop_body .evcal_cblock span {
+    color: #6acfee;
+}
+.evcal_cblock .evo_date .start em {color: #6b6b6b;}
+
+/*************/
+
 /* Browser Reset */
 html,
 body,
