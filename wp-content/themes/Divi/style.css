@@ -12,7 +12,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 .col-100{
 	width:100% !important;
 }
-
+.tamano-baner .et_pb_slide .et_pb_container{
+padding:61px 0px;
+}
 
 /* calendario*/
 .ajde_evcal_calendar .eventon_events_list .eventon_list_event {
