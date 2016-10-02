@@ -80,7 +80,7 @@
 			'css'=>'color:#$', 'var'=>'evcal_header1_fc',	'default'=>'C6C6C6'
 		),array(
 			'name'=>'Event Card color',
-			'item'=>'.eventon_events_list .eventon_list_event .evcal_eventcard, .evcal_evdata_row, .evorow .tbrow, .dark1',
+			'item'=>'.eventon_events_list .eventon_list_event .evcal_eventcard, .evcal_evdata_row, .evorow .tbrow, .dark1, .evo_pop_body',
 			'css'=>'background-color:#$', 'var'=>'evcal__bc1',	'default'=>'cdcdcd'
 		),array(
 			'item'=>'.dark1:hover',
@@ -89,13 +89,19 @@
 
 		//border color for event card
 		,array(
-			'item'=>'.event_description .bordb, #evcal_list .bordb, .eventon_events_list .eventon_list_event .event_description, .bordr, #evcal_list',
+			'item'=>'.event_description .bordb, #evcal_list .bordb, .eventon_events_list .eventon_list_event .event_description, .bordr, #evcal_list, .evo_pop_body .bordb',
 			'css'=>'border-color:#$', 'var'=>'evcal__evcbrb',	'default'=>'e5e5e5'
 		)
 		//eventtop
 		,array(
 			'item'=>'.eventon_events_list .eventon_list_event .evcal_list_a:after,  .evcal_list_a:after',
 			'css'=>'background-color:#$', 'var'=>'evcal__evcbrb0',	'default'=>'cdcdcd'
+		),array(
+			'item'=>'.eventon_events_list .eventon_list_event .evcal_list_a.featured_event',
+			'css'=>'background-color:#$', 'var'=>'evcal__bgc5',	'default'=>'F9ECE4'
+		),array(
+			'item'=>'.eventon_events_list .eventon_list_event .evcal_list_a.featured_event:hover',
+			'css'=>'background-color:#$', 'var'=>'evcal__bgc5h',	'default'=>'FAE4D7'
 		),array(
 			'item'=>'#eventon_loadbar_section',
 			'css'=>'border-color:#$', 'var'=>'evcal__evcbrb0',	'default'=>'cdcdcd'
@@ -140,7 +146,7 @@
 			'item'=>'.evo_cal_above span',
 			'multicss'=>array(
 				array('css'=>'color:#$', 'var'=>'evcal__jm001',	'default'=>'ffffff'),
-				array('css'=>'background-color:#$', 'var'=>'evcal__jm002',	'default'=>'D3D3D3')
+				array('css'=>'background-color:#$', 'var'=>'evcal__jm002',	'default'=>'ADADAD')
 			)			
 		),array(
 			'item'=>'.evo_cal_above span:hover',
@@ -148,7 +154,22 @@
 				array('css'=>'color:#$', 'var'=>'evcal__jm001H','default'=>'ffffff'),
 				array('css'=>'background-color:#$', 'var'=>'evcal__jm002H',	'default'=>'C8C8C8')
 			)			
-		),array(
+		),
+		// this month button
+			array(
+				'item'=>'.evo_cal_above span.evo-gototoday-btn',
+				'multicss'=>array(
+					array('css'=>'color:#$', 'var'=>'evcal__thm001',	'default'=>'ffffff'),
+					array('css'=>'background-color:#$', 'var'=>'evcal__thm002',	'default'=>'ADADAD')
+				)			
+			),array(
+				'item'=>'.evo_cal_above span.evo-gototoday-btn:hover',
+				'multicss'=>array(
+					array('css'=>'color:#$', 'var'=>'evcal__thm001H','default'=>'ffffff'),
+					array('css'=>'background-color:#$', 'var'=>'evcal__thm002H',	'default'=>'d3d3d3')
+				)			
+			),
+		array(
 			'item'=>'.ajde_evcal_calendar .calendar_header .evo_j_dates p a',
 			'multicss'=>array(
 				array('css'=>'color:#$', 'var'=>'evcal__jm003','default'=>'ffffff'),
@@ -197,6 +218,18 @@
 		),array(
 			'item'=>'.ajde_evcal_calendar .calendar_header .evcal_arrows:hover .fa',
 			'css'=>'color:#$', 'var'=>'evcal__jm01AH','default'=>'e2e2e2'
+		),array(
+			'item'=>'.eventon_events_list .eventon_list_event .cancel_event .evo_event_headers',
+			'multicss'=>array(
+				array('css'=>'color:#$', 'var'=>'evcal__cancel_event_2','default'=>'ffffff'),
+				array('css'=>'background-color:#$', 'var'=>'evcal__cancel_event_1','default'=>'F79191'),			
+			)			
+		),array(
+			'item'=>'.eventon_events_list .eventon_list_event .cancel_event.evcal_list_a',
+			'multicss'=>array(
+				array('css'=>'color:#$', 'var'=>'evcal__cancel_event_2','default'=>'ffffff'),
+				array('replace'=>'background:repeating-linear-gradient(45deg,#$0,#$0 10px,#$1 10px,#$1 20px)', 'var'=>array('evcal__cancel_event_3', 'evcal__cancel_event_4'),'default'=>array('FDF2F2','FAFAFA')),			
+			)			
 		)
 	));
 
@@ -207,9 +240,22 @@
 			echo $sa['item'].'{';
 
 			foreach($sa['multicss'] as $sin_CSS){
-				$css_val  = (!empty($opt[ $sin_CSS['var'] ] ))? $opt[ $sin_CSS['var'] ] : $sin_CSS['default'];
-				$css = str_replace('$',$css_val,$sin_CSS['css'] );
-				echo $css.';';
+				if(!empty($sin_CSS['replace'])){
+					$css = $sin_CSS['replace'];
+					foreach($sin_CSS['var'] as $index=>$var){
+						$css_val = (!empty($opt[ $var] ))? 
+							$opt[ $var ] : $sin_CSS['default'][$index];
+
+						$css = str_replace('$'.$index ,$css_val, $css );
+					}
+					
+					echo $css.';';
+				}else{
+					$css_val  = (!empty($opt[ $sin_CSS['var'] ] ))? $opt[ $sin_CSS['var'] ] : $sin_CSS['default'];
+					$css = str_replace('$',$css_val,$sin_CSS['css'] );
+					echo $css.';';
+				}
+				
 			}
 			echo '}';
 		}else{

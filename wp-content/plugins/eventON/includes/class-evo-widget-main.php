@@ -5,16 +5,14 @@
  * @author 		AJDE
  * @category 	Widget
  * @package 	EventON/Classes
- * @version     1.5
+ * @version     2.3.9
  */
 
-
-class EvcalWidget extends WP_Widget{
-	
+class EvcalWidget extends WP_Widget{	
 	function EvcalWidget(){
 		$widget_ops = array('classname' => 'EvcalWidget', 
 			'description' => 'EventON basic or upcoming list Event Calendar widget.' );
-		$this->WP_Widget('EvcalWidget', 'EventON Basic Calendar', $widget_ops);
+		parent::__construct('EvcalWidget', 'EventON Basic Calendar', $widget_ops);
 	}
 	
 	function widget_default(){
@@ -71,7 +69,7 @@ class EvcalWidget extends WP_Widget{
 			
 			<div class='evo_widget_outter evowig'>
 				<div class='evo_wig_item'>
-					<?php $eventon->throw_guide('Set a custom ID for widget calendar to separate it from other eventON calendar widgets. Specially if you have more than one eventON calendar widgets. <a href="http://www.myeventon.com/documentation/shortcode-guide/" target="_blank">What should be the ID</a>','L');?>
+					<?php $eventon->throw_guide('Set a custom ID for widget calendar to separate it from other eventON calendar widgets. Specially if you have more than one eventON calendar widgets. <a href="http://www.myeventon.com/documentation/shortcode-guide/" target="_blank">What should be the ID</a> DO NOT leave blank space.','L');?>
 					<input id="<?php echo $this->get_field_id('ev_cal_id'); ?>" name="<?php echo $this->get_field_name('ev_cal_id'); ?>" type="text" 
 					value="<?php echo esc_attr($ev_cal_id); ?>" placeholder="Widget ID" title="Widget ID"/>					
 				</div>
@@ -187,18 +185,15 @@ class EvcalWidget extends WP_Widget{
 		foreach($this->widget_default() as $defv=>$def){
 			if($defv!='ev_type_2')
 				$instance[$defv] = strip_tags($new_instance[$defv]);
-		}
-		
+		}		
 		return $instance;
 	}
 	
 	// add new default shortcode arguments
-	public function event_list_shortcode_defaults($arr){
-		
+	public function event_list_shortcode_defaults($arr){		
 		return array_merge($arr, array(
 			'hide_empty_months'=>'no',
-		));
-		
+		));		
 	}
 	
 	/**
@@ -206,6 +201,9 @@ class EvcalWidget extends WP_Widget{
 	 */
 	public function widget($args, $instance) {
 		global $eventon;
+
+		// make sure styles and scripts get loaded
+		$eventon->load_evo_scripts_styles();
 		
 		// DEFAULTS
 		$fixed_month = $fixed_year = 0;
@@ -296,7 +294,7 @@ class EvcalWidget_SC extends WP_Widget{
 	function EvcalWidget_SC(){
 		$widget_ops = array('classname' => 'EvcalWidget_SC', 
 			'description' => 'EventON shortcode executor in the widget.' );
-		$this->WP_Widget('EvcalWidget_SC', 'EventON Shortcode Executor (ESE)', $widget_ops);
+		parent::__construct('EvcalWidget_SC', 'EventON Shortcode Executor (ESE)', $widget_ops);
 	}
 
 
@@ -310,7 +308,7 @@ class EvcalWidget_SC extends WP_Widget{
 		// HTML
 
 		if(is_admin())
-			eventon_shortcode_pop_content();
+			$eventon->evo_admin->eventon_shortcode_pop_content();
 
 		?>
 		<div id='eventon_widget_settings' class='eventon_widget_settings'>
@@ -322,7 +320,7 @@ class EvcalWidget_SC extends WP_Widget{
 					value="<?php echo esc_attr($evo_title); ?>" placeholder='Widget Title' title='Widget Title'/>					
 				</div>
 			</div>
-			<p><a id='evo_shortcode_btn' class='eventon_popup_trig evo_admin_btn btn_prime' title='<?php _e('eventON Shortcode generator','eventon');?>' href='#'>[ Shortcode Generator ]</a><br/><i>NOTE: Page need to be refreshed after adding the widget, for the shortcode generator to function.</i></p>
+			<p><a id='evo_shortcode_btn' class='ajde_popup_trig evo_admin_btn btn_prime' data-popc='eventon_shortcode' title='<?php _e('eventON Shortcode generator','eventon');?>' href='#'>[ Shortcode Generator ]</a><br/><i>NOTE: Page need to be refreshed after adding the widget, for the shortcode generator to function.</i></p>
 			<p class='evo_widget_textarea'><textarea name="<?php echo $this->get_field_name('evo_shortcodeW'); ?>" id="<?php echo $this->get_field_id('evo_shortcodeW'); ?>"><?php echo esc_attr($evo_shortcodeW); ?></textarea><br/><label><?php _e('EventOn Calendar Shortcode','eventon');?><?php $eventon->throw_guide('Use the Eventon Shortcode Generator to create a shortcode based on your requirements, and paste it in here.','L');?></label></p>
 		
 		</div>
@@ -347,15 +345,10 @@ class EvcalWidget_SC extends WP_Widget{
 			extract($args, EXTR_SKIP);		
 			
 			
-			/*
-				 WIDGET
-			*/	
+			/*	 WIDGET */	
 			if(has_action('eventon_before_widget_SC')){
 				do_action('eventon_before_widget_SC');
-			}else{
-				echo $before_widget;
-			}			
-			
+			}else{	echo $before_widget;}	
 
 			$title = apply_filters('widget_title', $instance['evo_title'] );  
 
@@ -371,7 +364,6 @@ class EvcalWidget_SC extends WP_Widget{
 				echo "</div>";		
 			}
 
-
 			if(has_action('eventon_after_widget_SC')){
 				do_action('eventon_after_widget_SC');
 			}else{
@@ -383,15 +375,13 @@ class EvcalWidget_SC extends WP_Widget{
 register_widget( 'EvcalWidget_SC' );
 
 // EventON Future Events Widget
-class EvcalWidget_three extends WP_Widget{
-	
+class EvcalWidget_three extends WP_Widget{	
 	function EvcalWidget_three(){
 		$month = date('F');
 		$widget_ops = array('classname' => 'EvcalWidget_three', 
 			'description' => 'This widget will show all upcoming events for the current month ('.$month.').' );
-		$this->WP_Widget('EvcalWidget_three', 'EventON Basic Upcoming Events', $widget_ops);
+		parent::__construct('EvcalWidget_three', 'EventON Basic Upcoming Events', $widget_ops);
 	}
-
 
 	function form($instance) {
 		global $eventon;
@@ -400,15 +390,13 @@ class EvcalWidget_three extends WP_Widget{
 
 		$evo_title = (!empty($evo_title))? $evo_title: null;
 		// HTML
-
 		?>
 		<div id='eventon_widget_settings' class='eventon_widget_settings'>
-			<div class='eventon_widget_top'><p></p></div>
-			
+			<div class='eventon_widget_top'><p></p></div>			
 			<div class='evo_widget_outter evowig'>				
 				<div class='evo_wig_item'>					
 					<input id="<?php echo $this->get_field_id('evo_title'); ?>" name="<?php echo $this->get_field_name('evo_title'); ?>" type="text" 
-					value="<?php echo esc_attr($evo_title); ?>" placeholder='Widget Title' title='Widget Title'/>					
+					value="<?php echo esc_attr($evo_title); ?>" placeholder='Widget Title' title='Widget Title'/>
 				</div>
 			</div>
 			<p style='opacity:0.6'><i><?php _e('This widget will show future events for the current month. If there are no events upcoming for this month it will show as "No Events"','eventon');?></i></p>	
@@ -418,10 +406,8 @@ class EvcalWidget_three extends WP_Widget{
 
 	// update the new values for widget
 		function update($new_instance, $old_instance) {
-			$instance = $old_instance;
-			
-			$instance['evo_title'] = strip_tags($new_instance['evo_title']);
-			
+			$instance = $old_instance;			
+			$instance['evo_title'] = strip_tags($new_instance['evo_title']);			
 			return $instance;
 		}
 
@@ -435,8 +421,7 @@ class EvcalWidget_three extends WP_Widget{
 			/*	 WIDGET	*/	
 			if(has_action('eventon_before_widget_SC')){
 				do_action('eventon_before_widget_SC');
-			}else{	echo $before_widget;	}			
-			
+			}else{	echo $before_widget;	}
 
 			$title = apply_filters('widget_title', $instance['evo_title'] );  
 
@@ -450,7 +435,6 @@ class EvcalWidget_three extends WP_Widget{
 			echo "<div id='evcal_widget' class='evo_widget'>";
 			echo do_shortcode( $shortcode) ;	
 			echo "</div>";	
-
 
 			if(has_action('eventon_after_widget_SC')){
 				do_action('eventon_after_widget_SC');
@@ -466,9 +450,8 @@ class EvcalWidget_four extends WP_Widget{
 	function EvcalWidget_four(){
 		$widget_ops = array('classname' => 'EvcalWidget_four', 
 			'description' => 'Show events from only certain event type categories using this widget.' );
-		$this->WP_Widget('EvcalWidget_four', 'EventON Event Type Calendar', $widget_ops);
+		parent::__construct('EvcalWidget_four', 'EventON Event Type Calendar', $widget_ops);
 	}
-
 
 	function form($instance) {
 		global $eventon;
@@ -486,7 +469,7 @@ class EvcalWidget_four extends WP_Widget{
 			<div class='evo_widget_outter evowig'>				
 				<div class='evo_wig_item'>					
 					<input id="<?php echo $this->get_field_id('evo_title'); ?>" name="<?php echo $this->get_field_name('evo_title'); ?>" type="text" 
-					value="<?php echo esc_attr($evo_title); ?>" placeholder='Widget Title' title='Widget Title'/>					
+					value="<?php echo esc_attr($evo_title); ?>" placeholder='Widget Title' title='Widget Title'/>
 				</div>
 			</div>
 
@@ -516,7 +499,6 @@ class EvcalWidget_four extends WP_Widget{
 			</div>
 			<?php endforeach;?>
 			<p style='opacity:0.6'><i><?php _e('Selecting event type categories above will show events fall into all those categories for the current month.','eventon');?><br/><br/>If you are not able to achieve what you desire, try <a href='http://www.myeventon.com/documentation/use-eventon-shortcode-executor-widget/' target='_blank'>EventON Shortcode Executor Widget</a></i></p>	
-
 		</div>
 		<?php
 	}

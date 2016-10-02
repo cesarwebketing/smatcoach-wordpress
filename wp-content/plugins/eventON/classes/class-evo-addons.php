@@ -119,7 +119,8 @@ class evo_addon{
 
 	// Deactivate Addon from eventon products
 		public function remove_addon(){
-			return $this->evo_updater->product->deactivate($this->addon_data['slug']);
+			if(!empty($this->evo_updater))
+				return $this->evo_updater->product->deactivate($this->addon_data['slug']);
 		}
 	// return the current page names that should be used to check updates
 		function get_check_pages(){

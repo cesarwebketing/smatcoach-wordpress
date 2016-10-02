@@ -9,11 +9,62 @@ Tags: responsive-layout, one-column, two-columns, three-columns, four-columns, l
 License: GNU General Public License v2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
+.linea-azul {
+    width: 30px;
+    border-bottom: #019be1 solid 4px;
+    color: #fff;
+}
+.btn-des{ margin-top:13%;}
+.footer-widget li:before {
+    border-color: rgba(255, 255, 255, 0) !important;
+}
 .col-100{
 	width:100% !important;
 }
 .tamano-baner .et_pb_slide .et_pb_container{
 padding:61px 0px;
+}
+
+[data-tagid="11"] {
+    color: #FFF !important;
+    background: #EB1B24;
+    padding: 5px 20px !important;
+    font-size: 15px !important;
+}
+[data-tagid="15"] {
+    color: #FFF !important;
+    background: #FF8000;
+    padding: 5px 10px !important;
+    font-size: 15px !important;
+}
+[data-tagid="35"] {
+    color: #FFF !important;
+    background: #00A0DF;
+    padding: 5px 20px !important;
+    font-size: 15px !important;
+}
+[data-tagid="10"] {
+    color: #FFF !important;
+    background: #20BBC6;
+    padding: 5px 5px !important;
+    font-size: 15px !important;
+}
+.evcal_desc .evcal_desc3 em i {
+    display: none;
+}
+.evo_cal_above {
+    padding-bottom: 5px;
+    display: none;
+}
+.btn-pie {
+    padding: 5px 10px;
+    background-color: #009bde;
+    color: #fff !important;
+    float: left;
+    margin-top: 10px;
+}
+.btn-pie:hover {
+    background-color: rgba(0, 155, 222, 0.68);
 }
 
 /* calendario*/
@@ -10394,7 +10445,7 @@ body.ie .et_pb_divider {
 }
 
 .et_pb_widget a {
-	color: #666;
+	color: #ddd;
 	text-decoration: none;
 }
 
@@ -12530,7 +12581,7 @@ span.comment_date {
 	}
 
 	.et_pb_gutters3.et_pb_footer_columns3 .footer-widget .fwidget {
-		margin-bottom: 18.54%;
+		margin-bottom: 10%;
 	}
 
 	.et_pb_gutters3.et_pb_footer_columns3 .footer-widget.last {
@@ -15772,4 +15823,26 @@ span.comment_date {
 	.et_pb_section .et_pb_column .et_pb_post_slider_image_bottom .et_pb_slide_video {
 		margin-bottom: 16% !important;
 	}
+}
+
+@media (max-width: 767px) and (min-width: 200px){
+
+.eventon_filter_dropdown {
+    width: 100%;
+    margin-left: 0%;    
+margin-top: 0px !important;
+}
+
+.eventon_filter_dropdown p {
+    width:100%;}
+.ajde_evcal_calendar .eventon_events_list .eventon_list_event {
+    width: 98%;}
+.eventon_filter_line .filtering_set_val {
+    width: 100%;}
+.eventon_sorting_section {
+    margin-bottom: 200px !important;
+}
+.eventon_events_list .eventon_list_event .desc_trig {
+    min-height: auto !important;
+}
 }

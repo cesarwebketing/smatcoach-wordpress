@@ -5,32 +5,46 @@
  * @author 		AJDE
  * @category 	Admin
  * @package 	eventON/Admin/ajde_events
- * @version     1.2
+ * @version     1.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 
 // if events single page hide permalink and preview changes that links to single event post page -- which doesnt have supported template without eventon single event addon
-function eventon_perma_filter(){
-	add_action('admin_print_styles', 'eventon_remove_eventpost_previewbtn');
-	add_filter('get_sample_permalink_html', 'eventon_perm', 10,4);
-}
+	function eventon_perma_filter(){
+		add_action('admin_print_styles', 'eventon_remove_eventpost_previewbtn');
+		add_filter('get_sample_permalink_html', 'eventon_perm', 10,4);
+	}
 
-function eventon_perm($return, $id, $new_title, $new_slug){
-	$ret2 = preg_replace('/<span id="edit-slug-buttons">.*<\/span>|<span id=\'view-post-btn\'>.*<\/span>/i', '', $return);
-	return $ret2 ='';	
-}
-function eventon_remove_eventpost_previewbtn() {
-  ?>
-<style>#preview-action{ display:none; }</style>
-<?php 
-}
+	function eventon_perm($return, $id, $new_title, $new_slug){
+		global $post;
 
+		if(!isset($post)) return $return;
+		if($post->post_type!='ajde_events') return $return;
 
+		$ret2 = preg_replace('/<span id="edit-slug-buttons">.*<\/span>|<span id=\'view-post-btn\'>.*<\/span>/i', '', $return);
+		return $ret2 ='';	
+	}
 
-
-
+// remove event preview link section for eventon events only
+// @updated 2.2.28
+	function eventon_remove_eventpost_previewbtn() {
+		global $pagenow, $typenow;	
+		
+		if ( $typenow == 'post' && ! empty( $_GET['post'] ) ) {
+			$typenow = $post->post_type;
+		} elseif ( empty( $typenow ) && ! empty( $_GET['post'] ) ) {
+	        $post = get_post( $_GET['post'] );
+	        $typenow = $post->post_type;
+	    }
+		
+		if ( $typenow == '' || $typenow == "ajde_events" ):
+		  ?>
+		<style>#preview-action{ display:none; }</style>
+		<?php 
+		endif;
+	}
 
 /**
  * Columns for events page
@@ -39,44 +53,44 @@ function eventon_remove_eventpost_previewbtn() {
  * @param mixed $columns
  * @return array
  */
-function eventon_edit_event_columns( $existing_columns ) {
-	global $eventon;
-	
-	// GET event type custom names
-	$evcal_opt1= get_option('evcal_options_evcal_1');
-	$evt_name = (!empty($evcal_opt1['evcal_eventt']))?$evcal_opt1['evcal_eventt']:'Event Type';
-	$evt_name2 = (!empty($evcal_opt1['evcal_eventt2']))?$evcal_opt1['evcal_eventt2']:'Event Type 2';
-	
-	if ( empty( $existing_columns ) && ! is_array( $existing_columns ) )
-		$existing_columns = array();
+	function eventon_edit_event_columns( $existing_columns ) {
+		global $eventon;
+		
+		// GET event type custom names
+		$evcal_opt1= get_option('evcal_options_evcal_1');
+		$evt_name = (!empty($evcal_opt1['evcal_eventt']))?$evcal_opt1['evcal_eventt']:'Event Type';
+		$evt_name2 = (!empty($evcal_opt1['evcal_eventt2']))?$evcal_opt1['evcal_eventt2']:'Event Type 2';
+		
+		if ( empty( $existing_columns ) && ! is_array( $existing_columns ) )
+			$existing_columns = array();
 
-	unset( $existing_columns['title'], $existing_columns['comments'], $existing_columns['date'] );
+		unset( $existing_columns['title'], $existing_columns['comments'], $existing_columns['date'] );
 
-	$columns = array();
-	$columns["cb"] = "<input type=\"checkbox\" />";
-	
+		$columns = array();
+		$columns["cb"] = "<input type=\"checkbox\" />";
+		
 
-	//$columns["title"] = __( 'Event Name', 'eventon' );
-	$columns["name"] = __( 'Event Name', 'eventon' );
+		//$columns["title"] = __( 'Event Name', 'eventon' );
+		$columns["name"] = __( 'Event Name', 'eventon' );
 
-	$columns["event_location"] = __( 'Location', 'eventon' );
-	$columns["event_type"] = __( $evt_name, 'eventon' );
-	$columns["event_type_2"] = __( $evt_name2, 'eventon' );
-	$columns["event_start_date"] = __( 'Start Date', 'eventon' );
-	$columns["event_end_date"] = __( 'End Date', 'eventon' );
-	$columns["evo_featured"] = '<img src="' . AJDE_EVCAL_URL . '/assets/images/icons/featured.png" title="' . __( 'Featured', 'eventon' ) . '" title="' . __( 'Featured', 'eventon' ) . '" width="12" height="12" />';
-	$columns["repeat"] = '<img src="' . AJDE_EVCAL_URL . '/assets/images/icons/evo_repeat.png" alt="' . __( 'Event Repeat', 'eventon' ) . '" title="' . __( 'Event Repeat', 'eventon' ) . '" class="tips" />';;
-	//$columns["date"] = __( 'Date', 'eventon' );
+		$columns["event_location"] = __( 'Location', 'eventon' );
+		$columns["event_type"] = __( $evt_name, 'eventon' );
+		$columns["event_type_2"] = __( $evt_name2, 'eventon' );
+		$columns["event_start_date"] = __( 'Start Date', 'eventon' );
+		$columns["event_end_date"] = __( 'End Date', 'eventon' );
+		$columns["evo_featured"] = '<img src="' . AJDE_EVCAL_URL . '/assets/images/icons/featured.png" title="' . __( 'Featured', 'eventon' ) . '" title="' . __( 'Featured', 'eventon' ) . '" width="12" height="12" />';
+		$columns["repeat"] = '<img src="' . AJDE_EVCAL_URL . '/assets/images/icons/evo_repeat.png" alt="' . __( 'Event Repeat', 'eventon' ) . '" title="' . __( 'Event Repeat', 'eventon' ) . '" class="tips" />';
+		//$columns["date"] = __( 'Date', 'eventon' );
 
-	$columns = apply_filters('evo_event_columns', $columns);	
+		$columns = apply_filters('evo_event_columns', $columns);	
 
-	return array_merge( $columns, $existing_columns );
-}
+		return array_merge( $columns, $existing_columns );
+	}
 
 add_filter( 'manage_edit-ajde_events_columns', 'eventon_edit_event_columns' );
 
 /**
- * Custom Columns for Products page
+ * Custom Columns for event page
  *
  * @access public
  * @param mixed $column
@@ -220,7 +234,7 @@ function eventon_custom_event_columns( $column , $post_id) {
 			$evcal_location =get_post_meta($post->ID, 'evcal_location', true);
 			$evcal_location_name =get_post_meta($post->ID, 'evcal_location_name', true);
 			
-			echo ( (!empty($evcal_location_name))? $evcal_location_name.'<br/>':null);
+			echo ( (!empty($evcal_location_name))? stripslashes($evcal_location_name).'<br/>':null);
 			echo ( (!empty($evcal_location))? $evcal_location:'--' );
 				
 		break;	
@@ -230,11 +244,9 @@ function eventon_custom_event_columns( $column , $post_id) {
 			$unix =get_post_meta($post->ID, 'evcal_srow', true);
 			if(!empty($unix)){				
 				$_START = eventon_get_editevent_kaalaya($unix);
-				
-				echo $_START[0];
-			}else{
-				echo "--";
-			}			
+
+				echo $_START[0].' - '.$_START[1].':'.$_START[2]. (!empty($_START[3])? $_START[3]:'');
+			}else{	echo "--";	}			
 				
 		break;		
 		
@@ -243,7 +255,7 @@ function eventon_custom_event_columns( $column , $post_id) {
 			if(!empty($unix)){				
 				$_END = eventon_get_editevent_kaalaya($unix);
 				
-				echo $_END[0];
+				echo $_END[0].' - '.$_END[1].':'.$_END[2]. (!empty($_END[3])? $_END[3]:'');
 			}else{
 				echo "--";
 			}		
@@ -330,9 +342,6 @@ add_action('manage_ajde_events_posts_custom_column', 'eventon_custom_event_colum
 	}
 
 	add_filter( 'request', 'eventon_custom_event_orderby' );
-
-
-
 
 
 /**
@@ -506,9 +515,7 @@ function eventon_admin_events_quick_edit_scripts( $hook ) {
 add_action( 'admin_enqueue_scripts', 'eventon_admin_events_quick_edit_scripts', 10 );
 
 
-/**
- * Custom quick edit - save
- */
+/** Custom quick edit - save */
 function eventon_admin_event_quick_edit_save( $post_id, $post ) {
 
 	if ( ! $_POST || is_int( wp_is_post_revision( $post_id ) ) || is_int( wp_is_post_autosave( $post_id ) ) ) return $post_id;
@@ -571,9 +578,6 @@ function eventon_admin_event_quick_edit_save( $post_id, $post ) {
         $newpostdata['ID'] = $post_id;
 		//wp_update_post($newpostdata);
 	}
-
-	
-
 }
 
 add_action( 'save_post', 'eventon_admin_event_quick_edit_save', 10, 2 );

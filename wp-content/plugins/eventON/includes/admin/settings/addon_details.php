@@ -101,6 +101,24 @@
 			'link'=>'http://www.myeventon.com/addons/subscriber',
 			'download'=>'http://www.myeventon.com/addons/subscriber',
 			'desc'=>'Allow your users to follow and subscribe to calendars'
+		),'eventon-countdown'=>array(
+			'id'=>'EVOCD',
+			'name'=>'Countdown',
+			'link'=>'http://www.myeventon.com/addons/event-countdown/',
+			'download'=>'http://www.myeventon.com/addons/event-countdown/',
+			'desc'=>'Add countdown timer to events'
+		),'eventon-sync-events'=>array(
+			'id'=>'EVOSY',
+			'name'=>'Sync',
+			'link'=>'http://www.myeventon.com/addons/sync-events',
+			'download'=>'http://www.myeventon.com/addons/sync-events',
+			'desc'=>'Sync facebook and google events'
+		),'eventon-reviewer'=>array(
+			'id'=>'EVORE',
+			'name'=>'Event Reviewer',
+			'link'=>'http://www.myeventon.com/addons/event-reviewer',
+			'download'=>'http://www.myeventon.com/addons/event-reviewer',
+			'desc'=>'Rate and review events'
 		)
 	);
 
@@ -132,9 +150,9 @@ if(isset($_POST['action']) && $_POST['action']=='evo_addons'){
 			}else{	$_has_addon = false;	}
 						
 			// initial variables
-				$guide = ($_has_addon && !empty($_this_addon['guide_file']) )? "<span class='eventon_guide_btn eventon_popup_trig' ajax_url='{$_this_addon['guide_file']}' poptitle='How to use {$product['name']}'>Guide</span> | ":null;
+				$guide = ($_has_addon && !empty($_this_addon['guide_file']) )? "<span class='eventon_guide_btn ajde_popup_trig' ajax_url='{$_this_addon['guide_file']}' poptitle='How to use {$product['name']}'>Guide</span> | ":null;
 				
-				$__action_btn = (!$_has_addon)? "<a class='evo_admin_btn btn_secondary' target='_blank' href='". $product['download']."'>Get it now</a>": "<a class='eventon_popup_trig evo_admin_btn btn_prime' dynamic_c='1' content_id='eventon_pop_content_{$slug}' poptitle='Activate {$product['name']} License'>Activate Now</a>";
+				$__action_btn = (!$_has_addon)? "<a class='evo_admin_btn btn_secondary' target='_blank' href='". $product['download']."'>Get it now</a>": "<a class='ajde_popup_trig evo_admin_btn btn_prime' dynamic_c='1' content_id='eventon_pop_content_{$slug}' poptitle='Activate {$product['name']} License'>Activate Now</a>";
 
 				$__remote_version = (!empty($_this_addon['remote_version']))? '<span title="Remote server version"> /'.$_this_addon['remote_version'].'</span>': null;
 
@@ -149,7 +167,7 @@ if(isset($_POST['action']) && $_POST['action']=='evo_addons'){
 					<h2><?php echo $product['name']?></h2>
 					<p class='version'><span><?php echo $_this_addon['version']?></span><?php echo $__remote_version;?></p>
 					<p class='status'>License Status: <strong>Activated</strong></p>
-					<p><a class='evo_deact_adodn eventon_popup_trig evo_admin_btn btn_triad' dynamic_c='1' content_id='eventon_pop_content_dea_<?php echo $slug;?>' poptitle='Deactivate <?php echo $product['name'];?> License'>Deactivate</a></p>
+					<p><a class='evo_deact_adodn ajde_popup_trig evo_admin_btn btn_triad' dynamic_c='1' content_id='eventon_pop_content_dea_<?php echo $slug;?>' poptitle='Deactivate <?php echo $product['name'];?> License'>Deactivate</a></p>
 					<p class="links"><?php echo $guide;?><a href='<?php echo $product['link'];?>' target='_blank'>Learn More</a></p>
 						<div id='eventon_pop_content_dea_<?php echo $slug;?>' class='evo_hide_this'>
 							<p class="evo_loader"></p>

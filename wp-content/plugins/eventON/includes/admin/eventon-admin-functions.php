@@ -12,90 +12,52 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-
-
-
-/**
- * Prevent non-admin access to backend
- */
-add_filter( 'tiny_mce_version', 'eventon_refresh_mce' ); 
- 
-function eventon_prevent_admin_access() {
-	if ( get_option('eventon_lock_down_admin') == 'yes' && ! is_ajax() && ! ( current_user_can('edit_posts') || current_user_can('manage_eventon') ) ) {
-		//wp_safe_redirect(get_permalink(woocommerce_get_page_id('myaccount')));
-		exit;
+/** Prevent non-admin access to backend */
+	function eventon_prevent_admin_access() {
+		if ( get_option('eventon_lock_down_admin') == 'yes' && ! is_ajax() && ! ( current_user_can('edit_posts') || current_user_can('manage_eventon') ) ) {
+			//wp_safe_redirect(get_permalink(woocommerce_get_page_id('myaccount')));
+			exit;
+		}
 	}
-}
-
-
-// ADD custom "add eventon shortcode" button next to add media 
-add_action('media_buttons_context',  'eventon_shortcode_button');
-function eventon_shortcode_button($context) {
-	
-	global $pagenow, $typenow, $post;	
-	
-	if ( $typenow == 'post' && ! empty( $_GET['post'] ) ) {
-		$typenow = $post->post_type;
-	} elseif ( empty( $typenow ) && ! empty( $_GET['post'] ) ) {
-        $post = get_post( $_GET['post'] );
-        $typenow = $post->post_type;
-    }
-	
-	if ( $typenow == '' || $typenow == "ajde_events" ) return;
-
-	//our popup's title
-  	$text = '[ ] ADD EVENTON';
-  	$title = 'eventON Shortcode generator';
-
-  	//append the icon
-  	$context .= "<a id='evo_shortcode_btn' class='eventon_popup_trig evo_admin_btn btn_prime' title='{$title}' href='#'>{$text}</a>";
-	
-	eventon_shortcode_pop_content();
-	
-  	return $context;
-}
 
 /* eventON shortcode generator button for WYSIWYG editor */
- add_action('init', 'eventon_shortcode_button_init');
- function eventon_shortcode_button_init() {
+//add_action('init', 'eventon_shortcode_button_init');
+	 function eventon_shortcode_button_init() {
 
- 	global $pagenow, $typenow, $post;	
-	
-	if ( $typenow == 'post' && ! empty( $_GET['post'] ) ) {
-		$typenow = $post->post_type;
-	} elseif ( empty( $typenow ) && ! empty( $_GET['post'] ) ) {
-        $post = get_post( $_GET['post'] );
-        $typenow = (!empty($post) )? $post->post_type : '';
-    }
-	
-	if ( $typenow == '' || $typenow == "ajde_events" ) return;
-	
+	 	global $pagenow, $typenow, $post;	
+		
+		if ( $typenow == 'post' && ! empty( $_GET['post'] ) ) {
+			$typenow = $post->post_type;
+		} elseif ( empty( $typenow ) && ! empty( $_GET['post'] ) ) {
+	        $post = get_post( $_GET['post'] );
+	        $typenow = (!empty($post) )? $post->post_type : '';
+	    }
+		
+		if ( $typenow == '' || $typenow == "ajde_events" ) return;
+		
 
-      //Abort early if the user will never see TinyMCE
-      if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') && get_user_option('rich_editing') == 'true')
-           return;
+	      //Abort early if the user will never see TinyMCE
+	      if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') && get_user_option('rich_editing') == 'true')
+	           return;
 
-      //Add a callback to regiser our tinymce plugin   
-      add_filter("mce_external_plugins", "eventon_register_tinymce_plugin"); 
+	      //Add a callback to regiser our tinymce plugin   
+	      add_filter("mce_external_plugins", "eventon_register_tinymce_plugin"); 
 
-      // Add a callback to add our button to the TinyMCE toolbar
-      add_filter('mce_buttons', 'eventon_add_tinymce_button');
-}
+	      // Add a callback to add our button to the TinyMCE toolbar
+	      add_filter('mce_buttons', 'eventon_add_tinymce_button');
+	}
+	//This callback registers our plug-in
+	function eventon_register_tinymce_plugin($plugin_array) {
+	    $plugin_array['eventon_shortcode_button'] = AJDE_EVCAL_URL.'/assets/js/admin/shortcode.js';
+	    return $plugin_array;
+	}
 
-
-//This callback registers our plug-in
-function eventon_register_tinymce_plugin($plugin_array) {
-    $plugin_array['eventon_shortcode_button'] = AJDE_EVCAL_URL.'/assets/js/admin/shortcode.js';
-    return $plugin_array;
-}
-
-//This callback adds our button to the toolbar
-function eventon_add_tinymce_button($buttons) {
-            //Add the button ID to the $button array
-    $buttons[] = "eventon_shortcode_button";
-    return $buttons;
-}
-
+	//This callback adds our button to the toolbar
+	function eventon_add_tinymce_button($buttons) {
+	            //Add the button ID to the $button array
+	    $buttons[] = "eventon_shortcode_button";
+	    return $buttons;
+	}
 
 // @since 2.2.24
 // check if repeat post data are good to go
@@ -141,16 +103,29 @@ function eventon_add_tinymce_button($buttons) {
 		}
 
 		if($repeat_type=='custom'&& !empty($_POST['repeat_intervals'])){
-			$repeat_intervals = array();
+			
+			$_post_repeat_intervals = $_POST['repeat_intervals'];
 
 			// initials
 			$_is_24h = (!empty($_POST['_evo_time_format']) && $_POST['_evo_time_format']=='24h')? true:false;
 			$_wp_date_format = $_POST['_evo_date_format'];
 
-			date_default_timezone_set('UTC');	
+			date_default_timezone_set('UTC');
+
+			// make sure repeats are saved along with initial times for event
+			$numberof_repeats = count($_post_repeat_intervals);
+			if( !empty($unix_E) && !empty($unix_S) && 
+				$unix_S != $_post_repeat_intervals[0][0] &&
+				$unix_E != $_post_repeat_intervals[0][1] 
+			){
+				if($numberof_repeats==1)
+					$_post_repeat_intervals[] = array($unix_S,$unix_E);
+				if($numberof_repeats>=1)
+					$_post_repeat_intervals[0] = array($unix_S,$unix_E);
+			}
 
 			// each repeat interval
-			foreach($_POST['repeat_intervals'] as $interval){
+			foreach($_post_repeat_intervals as $interval){
 				// for intervals that were added as new
 				if(isset($interval['type']) && isset($interval['type'])=='dates'){
 					
@@ -238,41 +213,6 @@ function eventon_add_tinymce_button($buttons) {
 		return $repeat_intervals;
 	}
 
-
-/**
- * Short code popup content
- */
-function eventon_shortcode_pop_content(){
-	global $evo_shortcode_box, $eventon;
-	$content='';
-	
-	require_once(AJDE_EVCAL_PATH.'/classes/shortcodes/class-shortcode_box_generator.php');
-	
-	$content = $evo_shortcode_box->get_content();
-	
-	// eventon popup box
-	echo $eventon->output_eventon_pop_window(array(
-		'content'=>$content, 
-		'class'=>'eventon_shortcode', 
-		'attr'=>'clear="false"', 
-		'title'=>'Shortcode Generator',
-		//'subtitle'=>'Select option to customize shortcode variable values'
-	));
-}
-
-
-
-
-
-/**
- * Force TinyMCE to refresh.
- */
-	function eventon_refresh_mce( $ver ) {
-		$ver += 3;
-		return $ver;
-	}
-
-
 // SAVE: closed meta field boxes
 	function eventon_save_collapse_metaboxes( $page, $post_value ) {
 		
@@ -298,10 +238,8 @@ function eventon_shortcode_pop_content(){
 		if(empty($option_arr)) return;
 		
 		return unserialize($option_arr);
-		//return ($option_arr);
-		
+		//return ($option_arr);		
 	}
-
 
 // added in version 2.2.21
 	// check if curl installed

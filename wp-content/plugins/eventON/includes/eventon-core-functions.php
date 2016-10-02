@@ -7,7 +7,7 @@
  * @author 		AJDE
  * @category 	Core
  * @package 	EventON/Functions
- * @version     2.3
+ * @version     2.3.9
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -54,14 +54,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		global $wp_filesystem;
 		if ( ! $wp_filesystem->put_contents( $aq_uploads_dir . 'eventon_dynamic_styles.css', $css, 0777) ) {
 		    return true;
-		}
-		
+		}		
 	}
-
 
 // check for a shortcode in post content
 	function has_eventon_shortcode( $shortcode='', $post_content=''){
-
 		global $post;
 
 		$shortcode = (!empty($shortcode))? $shortcode : 'add_eventon';
@@ -77,76 +74,82 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			}else{
 				return false;
 			}
-		}else{
-			return false;
-		}
+		}else{	return false;	}
 	}
-
 
 // CHECEK if the date is future date	
-function eventon_is_future_event($current_time, $start_unix, $end_unix, $evcal_cal_hide_past, $hide_past_by=''){
+	function eventon_is_future_event($current_time, $start_unix, $end_unix, $evcal_cal_hide_past, $hide_past_by=''){
 
-	//echo $hide_past_by.'tt';
-	// hide past by
-	$hide_past_by = (!empty($hide_past_by))? $hide_past_by: false;
+		//echo $hide_past_by.'tt';
+		// hide past by
+		$hide_past_by = (!empty($hide_past_by))? $hide_past_by: false;
 
-	// classify past events by end date/time
-	if(!$hide_past_by || $hide_past_by=='ee'){
-		$future_event = ($end_unix >= $current_time )? true:false;
-	}else{
-		// classify past events by start date/time
-		$future_event = ($start_unix >= $current_time )? true:false;
-	}
-	
-	
-	if( 
-		( ($evcal_cal_hide_past=='yes' ) && $future_event )
-		|| ( ($evcal_cal_hide_past=='no' ) || ($evcal_cal_hide_past=='' ))
-	){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-function eventon_is_event_in_daterange($Estart_unix, $Eend_unix, $Mstart_unix, $Mend_unix, $shortcode=''){	
-
-	// past event only cal
-	if(!empty($shortcode['el_type']) && $shortcode['el_type']=='pe'){
-		if(		
-			( $Eend_unix <= $Mend_unix) &&
-			( $Eend_unix >= $Mstart_unix)
-		){
-			return true;
+		// classify past events by end date/time
+		if(!$hide_past_by || $hide_past_by=='ee'){
+			$future_event = ($end_unix >= $current_time )? true:false;
 		}else{
-			return false;
+			// classify past events by start date/time
+			$future_event = ($start_unix >= $current_time )? true:false;
 		}
-	}else{
-		if(
-			($Estart_unix<=$Mstart_unix && $Eend_unix>=$Mstart_unix) ||
-			($Estart_unix<=$Mend_unix && $Eend_unix>=$Mend_unix) ||
-			($Mstart_unix<=$Estart_unix && $Estart_unix<=$Mend_unix && $Eend_unix=='') ||		
-			($Mstart_unix<=$Estart_unix && $Estart_unix<=$Mend_unix && $Eend_unix==$Estart_unix) 	||
-			($Mstart_unix<=$Estart_unix && $Estart_unix<=$Mend_unix && $Eend_unix!=$Estart_unix)
+		
+		
+		if( 
+			( ($evcal_cal_hide_past=='yes' ) && $future_event )
+			|| ( ($evcal_cal_hide_past=='no' ) || ($evcal_cal_hide_past=='' ))
 		){
 			return true;
 		}else{
 			return false;
 		}
 	}
-}
+	// check if and event is past event
+	// @version 2.3.11
+	function eventon_is_event_past($current_time, $start_unix, $end_unix, $hide_past_by=''){
+		$hide_past_by = (!empty($hide_past_by))? $hide_past_by: false;
+		// classify past events by end date/time
+		if(!$hide_past_by || $hide_past_by=='ee'){
+			return ($end_unix < $current_time )? true:false;
+		}else{
+			// classify past events by start date/time
+			return ($start_unix < $current_time )? true:false;
+		}
+	}
 
+// if event is in date range
+	function eventon_is_event_in_daterange($Estart_unix, $Eend_unix, $Mstart_unix, $Mend_unix, $shortcode=''){	
 
-
-
-
+		// past event only cal
+		if(!empty($shortcode['el_type']) && $shortcode['el_type']=='pe'){
+			if(		
+				( $Eend_unix <= $Mend_unix) &&
+				( $Eend_unix >= $Mstart_unix)
+			){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			if(
+				($Estart_unix<=$Mstart_unix && $Eend_unix>=$Mstart_unix) ||
+				($Estart_unix<=$Mend_unix && $Eend_unix>=$Mend_unix) ||
+				($Mstart_unix<=$Estart_unix && $Estart_unix<=$Mend_unix && $Eend_unix=='') ||		
+				($Mstart_unix<=$Estart_unix && $Estart_unix<=$Mend_unix && $Eend_unix==$Estart_unix) 	||
+				($Mstart_unix<=$Estart_unix && $Estart_unix<=$Mend_unix && $Eend_unix!=$Estart_unix)
+			){
+				return true;
+			}else{
+				return false;
+			}
+		}
+	}
 
 // TIME formatting
 	// pretty time on event card
 	function eventon_get_langed_pretty_time($unixtime, $dateformat){
 
 		$datest = str_split($dateformat);
-		$__new_dates = $__output = '';
+		$__output = '';
+		$__new_dates = array();
 
 		// full month name
 		if(in_array('F', $datest)){
@@ -179,82 +182,76 @@ function eventon_is_event_in_daterange($Estart_unix, $Eend_unix, $Mstart_unix, $
 
 		// process values
 		foreach($datest as $date_part){
-			if(array_key_exists($date_part, $__new_dates)){
+			if(is_array($__new_dates) && array_key_exists($date_part, $__new_dates)){
 				$__output .= $__new_dates[$date_part];
 			}else{
 				$__output .= date($date_part, $unixtime);
 			}
 		}
-
-		//echo 'rr'.$__output;
-
 		return $__output;
-
 	}
+
 // RETURN: formatted event time in multiple formats
-function eventon_get_formatted_time($row_unix){
-	/*
-			D = Mon - Sun
-		1	j = 1-31
-			l = Sunday - Saturday
-		3	N - day of week 1 (monday) -7(sunday)
-			S - st, nd rd
-		5	n - month 1-12
-			F - January - Decemer
-		7	t - number of days in month
-			z - day of the year
-			Y - 2000
-			g = hours
-			i = minute
-			a = am/pm
-			M = Jan - Dec
-			m = 01-12
-			d = 01-31
-			H = hour 00 - 23
-	*/
+	function eventon_get_formatted_time($row_unix){
+		/*
+				D = Mon - Sun
+			1	j = 1-31
+				l = Sunday - Saturday
+			3	N - day of week 1 (monday) -7(sunday)
+				S - st, nd rd
+			5	n - month 1-12
+				F - January - Decemer
+			7	t - number of days in month
+				z - day of the year
+				Y - 2000
+				g = hours
+				i = minute
+				a = am/pm
+				M = Jan - Dec
+				m = 01-12
+				d = 01-31
+				H = hour 00 - 23
+		*/
 
-	date_default_timezone_set('UTC');
-			
-	$key = array('D','j','l','N','S','n','F','t','z','Y','g','i','a','M','m','d','H');
-	
-	$date = date('D-j-l-N-S-n-F-t-z-Y-g-i-a-M-m-d-H',$row_unix);
-	$date = explode('-',$date);
-	
-	
-	foreach($date as $da=>$dv){
-		// month name
-		if($da==6){
-			$output[$key[$da]]= eventon_return_timely_names_('month_num_to_name',$date[5]); 
-		}else if($da==2){
-			
-			// day name - full day name
-			$output[$key[$da]]= eventon_return_timely_names_('day',$date[2]); 
+		date_default_timezone_set('UTC');
+				
+		$key = array('D','j','l','N','S','n','F','t','z','Y','g','i','a','M','m','d','H');
 		
-		// 3 letter month name
-		}else if($da==13){
-			$output[$key[$da]]= eventon_return_timely_names_('month_num_to_name',$date[5],'three'); 
+		$date = date('D-j-l-N-S-n-F-t-z-Y-g-i-a-M-m-d-H',$row_unix);
+		$date = explode('-',$date);
+		
+		foreach($date as $da=>$dv){
+			// month name
+			if($da==6){
+				$output[$key[$da]]= eventon_return_timely_names_('month_num_to_name',$date[5]); 
+			}else if($da==2){
+				
+				// day name - full day name
+				$output[$key[$da]]= eventon_return_timely_names_('day',$date[2]); 
+			
+			// 3 letter month name
+			}else if($da==13){
+				$output[$key[$da]]= eventon_return_timely_names_('month_num_to_name',$date[5],'three'); 
 
 
-		// 3 letter day name
-		}else if($da==0){
-			$output[$key[$da]]= eventon_return_timely_names_('day_num_to_name',$date[3],'three'); 
-		}else{
-			$output[$key[$da]]= $dv;
-		}
+			// 3 letter day name
+			}else if($da==0){
+				$output[$key[$da]]= eventon_return_timely_names_('day_num_to_name',$date[3],'three'); 
+			}else{
+				$output[$key[$da]]= $dv;
+			}
+		}	
+		return $output;
 	}
-	
-	return $output;
-}
 
 /*	return date value and time values from unix timestamp */
 	function eventon_get_editevent_kaalaya($unix, $dateformat='', $timeformat24=''){
-		
-		
+				
 		// in case of empty date format provided
 		// find it within system
 		$DT_format = eventon_get_timeNdate_format();
 		
-		$offset = (get_option('gmt_offset', 0) * 3600);
+		//$offset = (get_option('gmt_offset', 0) * 3600);
 
 		date_default_timezone_set('UTC');
 		$unix = $unix ;
@@ -262,13 +259,11 @@ function eventon_get_formatted_time($row_unix){
 		$dateformat = (!empty($dateformat))? $dateformat: $DT_format[1];
 		$timeformat24 = (!empty($timeformat24))? $timeformat24: $DT_format[2];
 		
-		$date = date($dateformat, $unix);
-		
+		$date = date($dateformat, $unix);		
 		
 		$timestring = ($timeformat24)? 'H-i': 'g-i-A';
 		$times_val = date($timestring, $unix);
-		$time_data = explode('-',$times_val);
-		
+		$time_data = explode('-',$times_val);		
 		
 		$output = array_merge( array($date), $time_data);
 		
@@ -358,8 +353,7 @@ function eventon_get_formatted_time($row_unix){
 					$unix_end = mktime(23,55 ,00, $__ti['month'], $__ti['day'], $__ti['year'] );
 				}else{
 					$unix_end = mktime($__ti['hour'], $__ti['minute'],0, $__ti['month'], $__ti['day'], $__ti['year'] );
-				}
-						
+				}						
 				
 			}else{ $unix_end =0; }
 			$unix_end =(!empty($unix_end) )?$unix_end:$unix_start;
@@ -372,12 +366,9 @@ function eventon_get_formatted_time($row_unix){
 		$output = array(
 			'unix_start'=>$unix_start,
 			'unix_end'=>$unix_end
-		);
-		
+		);		
 		return $output;
 	}
-
-
 
 /*
 	return jquery and HTML UNIVERSAL date format for the site
@@ -418,8 +409,7 @@ function eventon_get_formatted_time($row_unix){
 		}else{
 			$jq_date_format ='yy/mm/dd';
 			$evo_date_format = 'Y/m/d';
-		}
-		
+		}		
 		
 		// time format
 		$wp_time_format = get_option('time_format');
@@ -433,11 +423,8 @@ function eventon_get_formatted_time($row_unix){
 		);
 	}
 
-
-
 // get single letter month names
 	function eventon_get_oneL_months($lang_options){
-
 		if(!empty($lang_options)) {$lang_options = $lang_options;}
 		else{
 			$opt = get_option('evcal_options_evcal_2');
@@ -452,11 +439,8 @@ function eventon_get_formatted_time($row_unix){
 			$output[] = (!empty($lang_options['evo_lang_1Lm_'.$count]))? $lang_options['evo_lang_1Lm_'.$count]: $month;
 			$count++;
 		}
-
 		return $output;
-
 	}
-
 
 // ---
 // SUPPORTIVE time and date functions
@@ -467,7 +451,8 @@ function eventon_get_formatted_time($row_unix){
 				We are making time (mktime) and getting time (date) using php server timezone
 				So we first adjust save UNIX to get unix at UTC/GMT 0 and then we adjust that time to offset for timezone saved on wordpress settings.
 			*/
-			$__unix = $unix - (date('Z')) - $offset;
+			//$__unix = $unix - (date('Z')) - $offset;
+			$__unix = $unix - $offset;
 
 			//$the_date = $unix;
 			//date_default_timezone_get();
@@ -483,9 +468,6 @@ function eventon_get_formatted_time($row_unix){
 	function evo_unix_offset($unix){
 		$offset = (get_option('gmt_offset', 0) * 3600);
 	}
-
-
-
 
 // return 24h or 12h or true false
 	function eventon_get_time_format($return='tf'){
@@ -529,13 +511,9 @@ function eventon_get_formatted_time($row_unix){
 					$new_str.= $st;
 				break;
 			}
-		}
-		
+		}		
 		return $new_str;
 	}
-
-
-
 
 /*
 	function to return day names and month names in correct language
@@ -574,15 +552,13 @@ function eventon_get_formatted_time($row_unix){
 			if($len=='full'){			
 				
 				$option_name_prefix = 'evcal_lang_day';
-				$_not_value = $eventon_day_names[ $text_num];
-				
+				$_not_value = $eventon_day_names[ $text_num];				
 			
 			// 3 letter day names
 			}else if($len=='three'){
 				
 				$option_name_prefix = 'evo_lang_3Ld_';
-				$_not_value = substr($eventon_day_names[ $text_num], 0 , 3);			
-				
+				$_not_value = substr($eventon_day_names[ $text_num], 0 , 3);
 			}
 		
 		// day number to name
@@ -641,11 +617,9 @@ function eventon_get_formatted_time($row_unix){
 		return $output;
 	}
 
-
 	function eventon_get_event_day_name($day_number){
 		return eventon_return_timely_names_('day_num_to_name',$day_number);
 	}
-
 
 	// return month and year numbers from current month and difference
 	function eventon_get_new_monthyear($current_month_number, $current_year, $difference){
@@ -669,9 +643,6 @@ function eventon_get_formatted_time($row_unix){
 		return $ra;
 	}
 
-
-
-
 // =========
 // LANGUAGE 
 
@@ -683,9 +654,12 @@ function eventon_get_formatted_time($row_unix){
 		$evo_options = (!empty($evo_options))? $evo_options: get_option('evcal_options_evcal_2');
 		
 		// check for language preference
-		$shortcode_arg = $eventon->evo_generator->shortcode_args;
-		$_lang_variation = (!empty($shortcode_arg['lang']))? $shortcode_arg['lang']:'L1';
-		
+		if(!empty($lang)){
+			$_lang_variation = $lang;
+		}else{
+			$shortcode_arg = $eventon->evo_generator->shortcode_args;
+			$_lang_variation = (!empty($shortcode_arg['lang']))? $shortcode_arg['lang']:'L1';
+		}
 		
 		$new_lang_val = (!empty($evo_options[$_lang_variation][$field]) )?
 			stripslashes($evo_options[$_lang_variation][$field]): $default_val;
@@ -702,6 +676,28 @@ function eventon_get_formatted_time($row_unix){
 		return $new_options;
 	}
 
+// @version 2.2.28
+// self sufficient language translattion
+// faster translation
+	function evo_lang($text, $lang='', $language_options=''){
+		global $eventon;
+		$language_options = (!empty($language_options))? $language_options: get_option('evcal_options_evcal_2');
+		$shortcode_arg = $eventon->evo_generator->shortcode_args;
+
+		// conditional correct language 
+		$lang = (!empty($lang))? $lang:
+			(!empty($eventon->lang) ? $eventon->lang:
+				( !empty($shortcode_arg['lang'])? $shortcode_arg['lang']: 'L1')
+			);
+
+		$field_name = str_replace(' ', '-',  strtolower($text));
+
+		return !empty($language_options[$lang][$field_name])? $language_options[$lang][$field_name]:$text;
+	}
+	// this function with directly echo the values
+		function evo_lang_e($text, $lang='', $language_options=''){
+			echo evo_lang($text, $lang='', $language_options='');
+		}
 
 /* ADD TO CALENDAR */
 	function eventon_get_addgoogle_cal($object){
@@ -709,10 +705,10 @@ function eventon_get_formatted_time($row_unix){
 		$start = evo_get_adjusted_utc($object->estart);
 		$end = evo_get_adjusted_utc($object->eend);
 		$title = urlencode($object->etitle);
+		$excerpt = !empty($object->excerpt)? $object->excerpt: $object->etitle;
 
-		return 'http://www.google.com/calendar/event?action=TEMPLATE&amp;text='.$title.'&amp;dates='.$start.'/'.$end.'&amp;details='.$title.'&amp;location='.$location;
+		return 'http://www.google.com/calendar/event?action=TEMPLATE&amp;text='.$title.'&amp;dates='.$start.'/'.$end.'&amp;details='.( urlencode($excerpt) ).'&amp;location='.$location;
 	}
-
 
 /** SORTING arrangement functions **/
 	function cmp_esort_startdate($a, $b){
@@ -725,12 +721,8 @@ function eventon_get_formatted_time($row_unix){
 		return strcmp($a["event_color"], $b["event_color"]);
 	}
 
-
 // GET EVENT
-	function get_event($the_event){
-		global $eventon;
-	}
-
+	function get_event($the_event){	global $eventon;}
 
 // Returns a proper form of labeling for custom post type
 /** Function that returns an array containing the IDs of the products that are on sale. */
@@ -782,7 +774,6 @@ function eventon_get_formatted_time($row_unix){
 		return (!empty( $options_value[$var]))? $options_value[$var] : $default;
 	}
 
-
 // Return a excerpt of the event details
 	function eventon_get_event_excerpt($text, $excerpt_length, $default_excerpt='', $title=true){
 		global $eventon;
@@ -791,19 +782,18 @@ function eventon_get_formatted_time($row_unix){
 		
 		if(empty($default_excerpt) ){
 		
-			$words = explode(' ', $text, $excerpt_length + 1);
-			if(count($words) > $excerpt_length) :
-				array_pop($words);
-				array_push($words, '[...]');
-				$content = implode(' ', $words);
-			endif;
+			$words = explode(' ', $text);
+
+			if(count($words)> $excerpt_length)
+				$words = array_slice($words, 0, 5, true);
+
+			$content = implode(' ', $words);
 			$content = strip_shortcodes($content);
 			$content = str_replace(']]>', ']]&gt;', $content);
 			$content = strip_tags($content);
 		}else{
 			$content = $default_excerpt;
-		}
-		
+		}		
 		
 		$titletx = ($title)? '<h3 class="padb5 evo_h3">' . eventon_get_custom_language($eventon->evo_generator->evopt2, 'evcal_evcard_details','Event Details').'</h3>':null;
 		
@@ -811,22 +801,22 @@ function eventon_get_formatted_time($row_unix){
 		
 		return $content;
 	}
-	function eventon_get_normal_excerpt($text, $excerpt_length){
+	function eventon_get_normal_excerpt($string, $excerpt_length){
 		$content='';
 
-		$words = explode(' ', $text, $excerpt_length + 1);
-		if(count($words) > $excerpt_length) :
-			array_pop($words);
-			array_push($words, '...');
-			$content = implode(' ', $words);
-		endif;
+		$words = explode(' ', $string);
+
+		if(count($words)> $excerpt_length)
+			$words = array_slice($words, 0, 5, true);
+
+		$content = implode(' ', $words);
+
 		$content = strip_shortcodes($content);
 		$content = str_replace(']]>', ']]&gt;', $content);
 		$content = strip_tags($content);
 
 		return $content;
 	}
-
 
 /** eventon Term Meta API - Get term meta */
 	function get_eventon_term_meta( $term_id, $key, $single = true ) {
@@ -837,8 +827,7 @@ function eventon_get_formatted_time($row_unix){
 	function eventon_get_template_part( $slug, $name = '' , $preurl='') {
 		global $eventon;
 		$template = '';
-		
-		
+				
 		if($preurl){
 			$template =$preurl."/{$slug}-{$name}.php";
 		}else{
@@ -852,35 +841,67 @@ function eventon_get_formatted_time($row_unix){
 
 			// If template file doesn't exist, look in yourtheme/slug.php and yourtheme/eventon/slug.php
 			if ( !$template )
-				$template = locate_template( array ( "{$slug}.php", "{$eventon->template_url}{$slug}.php" ) );
-
-			
+				$template = locate_template( array ( "{$slug}.php", "{$eventon->template_url}{$slug}.php" ) );			
 		}
 		
-		if ( $template )
-			load_template( $template, false );
+		if ( $template )	load_template( $template, false );
 	}
 
-
-
-
-
-
-
-
-
-
-
-/** Get capabilities for Eventon - these are assigned to admin during installation or reset
+/** 
+ * Get other templates passing attributes and including the file
+ * @access public
+ * @version 0.1
+ * @since  2.3.6
  */
+	function evo_get_template($template_name, $args=array(), $template_path='', $default_path=''){
+
+		if($args && is_array($args))
+			extract($args);
+
+		$located = evo_locate_template( $template_name, $template_path, $default_path );
+
+		if ( ! file_exists( $located ) ) {
+	         _doing_it_wrong( __FUNCTION__, sprintf( '<code>%s</code> does not exist.', $located ), '2.1' );
+	         return;
+	     }
+	 
+	    // Allow 3rd party plugin filter template file from their plugin
+	    $located = apply_filters( 'evo_get_template', $located, $template_name, $args, $template_path, $default_path );
+	 	     
+	    include( $located );
+	}
+
+	function evo_locate_template($template_name, $template_path = '', $default_path = ''){
+
+		if(!$template_path)
+			$template_path = AJDE_EVCAL_PATH;
+
+		if(!$default_path)
+			$default_path = AJDE_EVCAL_PATH.'/templates/';
+
+		$template = locate_template(
+			array(
+				trailingslashit( $template_path ) . $template_name,
+				$template_name
+			)
+		);
+
+		// get default template
+		if(!$template ){
+			$template = $default_path.$template_name;
+		}
+
+		return $template;
+
+	}
+
+// Get capabilities for Eventon - these are assigned to admin during installation or reset
 	function eventon_get_core_capabilities(){
 		$capabilities = array();
 
 		$capabilities['core'] = apply_filters('eventon_core_capabilities',array(
 			"manage_eventon"
 		));
-		
-		
 		
 		$capability_types = array( 'eventon' );
 
@@ -889,6 +910,10 @@ function eventon_get_formatted_time($row_unix){
 			$capabilities[ $capability_type ] = array(
 
 				// Post type
+				"publish_{$capability_type}",
+				"edit_{$capability_type}",
+				"read_{$capability_type}",
+				"delete_{$capability_type}",
 				"publish_{$capability_type}s",
 				"edit_{$capability_type}s",
 				"edit_others_{$capability_type}s",	
@@ -904,56 +929,18 @@ function eventon_get_formatted_time($row_unix){
 				"manage_{$capability_type}_terms",
 				"edit_{$capability_type}_terms",
 				"delete_{$capability_type}_terms",
-				"assign_{$capability_type}_terms"
+				"assign_{$capability_type}_terms",
+				"upload_files"
 			);
-
-			/*
-			// Post type
-				"publish_{$capability_type}",
-				"edit_{$capability_type}",
-				"read_{$capability_type}",
-				"delete_{$capability_type}",
-				"edit_{$capability_type}s",
-				"edit_others_{$capability_type}s",
-				"publish_{$capability_type}s",
-				"read_private_{$capability_type}s",
-				"delete_{$capability_type}s",
-				"delete_private_{$capability_type}s",
-				"delete_published_{$capability_type}s",
-				"delete_others_{$capability_type}s",
-				"edit_private_{$capability_type}s",
-				"edit_published_{$capability_type}s",
-				*/
 		}
-
 		return $capabilities;
 	}
-
-
-// sort eventcard fields 
-	function eventon_EVC_sort($array, $order_option_val){
-		
-		$new_array = array();
-		
-		// create an array
-		$correct_order = (!empty($order_option_val))? 
-			explode(',',$order_option_val): null;
-		
-		if(!empty($correct_order)){
-			foreach($correct_order as $box){
-				if(array_key_exists($box, $array))
-					$new_array[$box]=$array[$box];
-			}
-		}else{
-			$new_array = $array;
-		}	
-		return $new_array;
-	}
-
 
 /* Initiate capabilities for eventON */
 	function eventon_init_caps(){
 		global $wp_roles;
+
+		//print_r($wp_roles);
 		
 		if ( class_exists('WP_Roles') )
 			if ( ! isset( $wp_roles ) )
@@ -968,18 +955,10 @@ function eventon_get_formatted_time($row_unix){
 		}
 	}
 
-
 // for style values
-/*
-	Default value
-	field variable name
-	wp options array
-*/
-function eventon_styles($default, $field, $options){	
-	return (!empty($options[$field]))? $options[$field]:$default;
-}
-
-
+	function eventon_styles($default, $field, $options){	
+		return (!empty($options[$field]))? $options[$field]:$default;
+	}
 
 // GET activated event type count
 	function evo_verify_extra_ett($evopt=''){
@@ -990,11 +969,8 @@ function eventon_styles($default, $field, $options){
 		for($x=3; $x<6; $x++ ){
 			if(!empty($evopt['evcal_ett_'.$x]) && $evopt['evcal_ett_'.$x]=='yes'){
 				$count[] = $x;
-			}else{
-				break;
-			}
+			}else{	break;	}
 		}
-
 		return $count;
 	}
 	// this return the count for each event type that are activated in accordance
@@ -1009,7 +985,6 @@ function eventon_styles($default, $field, $options){
 				break;
 			}
 		}
-
 		return $count;
 	}
 
@@ -1019,7 +994,7 @@ function eventon_styles($default, $field, $options){
 		$evopt = (!empty($evopt))? $evopt: get_option('evcal_options_evcal_1');
 
 		$count=0;
-		for($x=1; $x<11; $x++ ){
+		for($x=1; $x<evo_max_cmd_count(); $x++ ){
 			if(!empty($evopt['evcal_af_'.$x]) && $evopt['evcal_af_'.$x]=='yes' && !empty($evopt['evcal_ec_f'.$x.'a1'])){
 				$count = $x;
 			}else{
@@ -1030,7 +1005,9 @@ function eventon_styles($default, $field, $options){
 		return $count;
 	}
 	function evo_retrieve_cmd_count($evopt=''){
-		$evopt = (!empty($evopt))? $evopt: get_option('evcal_options_evcal_1');
+		global $eventon;
+		$opt = $eventon->frontend->evo_options;
+		$evopt = (!empty($evopt))? $evopt: $opt;
 		
 		if(!empty($evopt['cmd_count']) && $evopt['cmd_count']==0){
 			return $evopt['cmd_count'];
@@ -1042,6 +1019,11 @@ function eventon_styles($default, $field, $options){
 
 			return $new_c;
 		}
+	}
+	// return maximum custom meta data field count for event
+	// @version 2.3.11
+	function evo_max_cmd_count(){
+		return apply_filters('evo_max_cmd_count', 11);
 	}
 
 // GET event type names
@@ -1057,10 +1039,17 @@ function eventon_styles($default, $field, $options){
 	}
 	function evo_get_localized_ettNames($lang='', $options='', $options2=''){
 		$output ='';
+		global $eventon;
 
 		$options = (!empty($options))? $options: get_option('evcal_options_evcal_1');
 		$options2 = (!empty($options2))? $options2: get_option('evcal_options_evcal_2');
-		$_lang_variation = (!empty($lang))? $lang:'L1';
+		
+		if(!empty($lang)){
+			$_lang_variation = $lang;
+		}else{
+			$shortcode_arg = $eventon->evo_generator->shortcode_args;
+			$_lang_variation = (!empty($shortcode_arg['lang']))? $shortcode_arg['lang']:'L1';
+		}
 
 		
 		// foreach event type upto activated event type categories
@@ -1078,25 +1067,21 @@ function eventon_styles($default, $field, $options){
 				$output[$x] = $lang_name;
 			}else{
 				$output[$x] = (!empty($options['evcal_eventt'.$ab]))? $options['evcal_eventt'.$ab]:'Event Type '.$ab;
-			}
-			
+			}			
 		}
 		return $output;
 	}
-
 
 // GET  event custom taxonomy field names
 	function eventon_get_event_tax_name($tax, $options=''){
 		$output ='';
 
 		$options = (!empty($options))? $options: get_option('evcal_options_evcal_1');
-
 		if($tax =='et'){
 			$output = (!empty($options['evcal_eventt']))? $options['evcal_eventt']:'Event Type';
 		}elseif($tax=='et2'){
 			$output = (!empty($options['evcal_eventt2']))? $options['evcal_eventt2']:'Event Type 2';
 		}
-
 		return $output;
 	}
 
@@ -1125,7 +1110,6 @@ function eventon_styles($default, $field, $options){
 
 		return $output;
 	}
-
 
 // GET SAVED VALUES
 	// meta value check and return
@@ -1160,33 +1144,26 @@ function eventon_styles($default, $field, $options){
 		}
 	}
 
-
-
-
 /* 2.2.17 */
-
 	// process taxnomy filter values and return terms and operator
 		function eventon_tax_filter_pro($value){
+			// value have NOT in it
 			if(strpos($value, 'NOT-')!== false){
 				$op = explode('-', $value);
-				$filter_op='NOT IN';
+				$filter_op='NOT';
 				$vals = $op[1];
 			}else{
 				$vals= $value;
 				$filter_op = 'IN';
 			}
-
 			return array($vals, $filter_op);
 		}
 
 	// get options for eventon settings
-		/*
-			tab ending = 1,2, etc. rs for rsvp
-		*/
+		//	tab ending = 1,2, etc. rs for rsvp
 		function evo_get_options($tab_ending){
 			return get_option('evcal_options_evcal_'.$tab_ending);
 		}
-
 
 	// PAGING functions
 		// return archive eevnt page id set in previous version or in settigns
@@ -1219,7 +1196,6 @@ function eventon_styles($default, $field, $options){
 			return $template;
 		}
 		function evo_archive_page_content(){}
-
 
 // eventon and wc check function
 // added 2.2.17 - updated: 2.2.19
@@ -1364,10 +1340,8 @@ function eventon_styles($default, $field, $options){
 					(!empty($pmv['evcal_lat']) && !empty($pmv['evcal_lon']))
 				){
 					return true;
-					}else{ return false;}
+				}else{ return false;}
 			}
-
-
 
 // added 2.2.21
 	// get eventon settings option values
@@ -1389,10 +1363,7 @@ function eventon_styles($default, $field, $options){
 			return get_option('evcal_options_evcal_'.$num);
 		}
 
-
-
-/* version 2.2.25 */
-	
+/* version 2.2.25 */	
 	/* when events are moved to trash record time */
 		function eventon_record_trashedtime($opt){
 			$opt['event_trashed'] = current_time('timestamp');
@@ -1417,11 +1388,7 @@ function eventon_styles($default, $field, $options){
 			}else{ return false;}
 		}
 	/* check event post values for exclude on trashing the event post */
-		function is_eventon_event_excluded($pmv){
-			
-		}	
-
-
+		function is_eventon_event_excluded($pmv){}	
 
 // EVENT COLOR
 	/** Return integer value for a hex color code **/
@@ -1456,7 +1423,6 @@ function eventon_styles($default, $field, $options){
 
 					// strip all # from hex val
 					$pure_hex_val = str_replace('#','',$pmv['evcal_event_color'][0]);
-
 				}else{
 					$pure_hex_val = $pmv['evcal_event_color'][0];
 				}
@@ -1465,17 +1431,12 @@ function eventon_styles($default, $field, $options){
 				if(!empty($defaultColor)){
 					$pure_hex_val = $defaultColor;
 				}else{
-
 					$opt = (!empty($opt))? $opt: get_option('evcal_options_evcal_1');
 					$pure_hex_val = ( !empty($opt['evcal_hexcode'])? $opt['evcal_hexcode']: '206177');
-				}
-				
+				}				
 			}
-
 			return '#'.$pure_hex_val;
 		}
-
-
 
 // SUPPORT FUNCTIONS
 	/** Clean variables */
@@ -1514,9 +1475,6 @@ function eventon_styles($default, $field, $options){
 			);
 		}
 
-
-
-
 	if(!function_exists('date_parse_from_format')){
 		function date_parse_from_format($_wp_format, $date){
 			
@@ -1553,8 +1511,7 @@ function eventon_styles($default, $field, $options){
 			}
 			
 			$ar['hour']= date('H', strtotime($time_pcs[1]));
-			$ar['minute']= date('i', strtotime($time_pcs[1]));
-			
+			$ar['minute']= date('i', strtotime($time_pcs[1]));			
 			
 			return $ar;
 		}

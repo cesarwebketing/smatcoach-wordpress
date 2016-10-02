@@ -2,7 +2,7 @@
 /**
  * Event Top section
  * process content as html output
- * @since  eventon 2.2.23
+ * @since  eventon 2.3.7
  * @version  0.1
  */
 function eventon_get_eventtop_print($array, $evOPT, $evOPT2){
@@ -30,7 +30,8 @@ function eventon_get_eventtop_print($array, $evOPT, $evOPT2){
 				$OT.= apply_filters("eventon_eventtop_{$boxname}", $object, $helpers);	
 			break;
 			case 'ft_img':
-				$OT.= "<span class='ev_ftImg' style='background-image:url(".$object->url.")'></span>";
+				$url = !empty($object->url_med)? $object->url_med: $object->url;
+				$OT.= "<span class='ev_ftImg' style='background-image:url(".$url.")'></span>";
 			break;
 			case 'day_block':
 
@@ -40,7 +41,10 @@ function eventon_get_eventtop_print($array, $evOPT, $evOPT2){
 
 			break;
 			case 'titles':
-				$OT.= "<span class='evcal_desc evo_info ". ( $object->yearlong?'yrl':null)."' {$object->loc_vars} ><span class='evcal_desc2 evcal_event_title' itemprop='name'>".$object->title."</span>";
+				$OT.= "<span class='evcal_desc evo_info ". ( $object->yearlong?'yrl':null)."' {$object->loc_vars} >";
+				if($object->cancel)
+					$OT.= "<span class='evo_event_headers canceled' title='".(!empty($object->cancel_reason)? $object->cancel_reason: null)."'>".( eventon_get_custom_language( $evOPT2,'evcal_evcard_evcancel', 'Event Cancelled')  )."</span>";
+				$OT.= "<span class='evcal_desc2 evcal_event_title' itemprop='name'>".$object->title."</span>";
 				if($object->subtitle)
 					$OT.= "<span class='evcal_event_subtitle' >".$object->subtitle."</span>";
 			break;
@@ -50,24 +54,40 @@ function eventon_get_eventtop_print($array, $evOPT, $evOPT2){
 
 				// time
 				if($object->fields_ && in_array('time',$object->fields))
-					$OT.= "<em class='evcal_time'>".$object->html['html_fromto']."</em> ";
+					$OT.= "<em class='evcal_time'>".$object->html['html_fromto'].(!empty($object->timezone)? ' <em class="evo_etop_timezone">'.$object->timezone. '</em>':null)."</em> ";
 				//location
-				if($object->fields_ && in_array('location',$object->fields))
+				if($object->fields_ && in_array('location',$object->fields) && !empty($object->location))
 					$OT.=$object->location;
 
 				//location name
 				if($object->fields_ && in_array('locationame',$object->fields) && $object->locationname)
-					$OT.='<em class="evcal_location event_location_name">'.$object->locationname.'</em>';
+					$OT.='<em class="evcal_location event_location_name">'.stripslashes($object->locationname).'</em>';
 
 				$OT.="</span>";
 				$OT.="<span class='evcal_desc3'>";
 
 				//organizer
-				if($object->fields_ && in_array('organizer',$object->fields))
-					$OT.="<em class='evcal_oganizer'><i>".( eventon_get_custom_language( $evOPT2,'evcal_evcard_org', 'Event Organized By')  ).':</i> '.$object->evvals['evcal_organizer'][0]."</em>";
+				$org = (!empty($object->evvals['evcal_organizer']))? $object->evvals['evcal_organizer'][0]:'';
+				if($object->fields_ && in_array('organizer',$object->fields) && !empty($org)){
+					$OT.="<em class='evcal_oganizer'><i>".( eventon_get_custom_language( $evOPT2,'evcal_evcard_org', 'Event Organized By')  ).':</i> '.$org."</em>";
+				}
 				//event type
 				if($object->tax)
 					$OT.= $object->tax;
+
+				// event tags
+				if($object->fields_ && in_array('tags',$object->fields) && !empty($object->tags) ){
+					$OT.="<span class='evo_event_tags'>
+						<em><i>".eventon_get_custom_language( $evOPT2,'evo_lang_eventtags', 'Event Tags')."</i></em>";
+
+					$count = count($object->tags);
+					$i = 1;
+					foreach($object->tags as $tag){
+						$OT.="<em data-tagid='{$tag->term_id}'>{$tag->name}".( ($count==$i)?'':',')."</em>";
+						$i++;
+					}
+					$OT.="</span>";
+				}
 
 				// custom fields
 				for($x=1; $x<$object->cmdcount+1; $x++){

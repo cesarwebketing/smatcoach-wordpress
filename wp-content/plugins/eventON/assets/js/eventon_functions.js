@@ -24,6 +24,10 @@
 						var filter_ar = {};
 						filter_ar['filter_type'] = $(this).attr('data-filter_type');
 						filter_ar['filter_name'] = $(this).attr('data-filter_field');
+
+						if($(this).attr('data-fl_o')=='NOT'){
+							filter_ar['filter_op']='NOT IN';
+						}
 						filter_ar['filter_val'] = filter_val;
 						filter_array.push(filter_ar);
 					}
@@ -87,5 +91,8 @@
 
 			return options.data_arg;
 		}
+
+
+		
 
 }(jQuery));

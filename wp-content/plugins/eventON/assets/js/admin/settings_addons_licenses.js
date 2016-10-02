@@ -61,9 +61,9 @@ jQuery(document).ready(function($){
 		}
 
 	// License Verification for EventON
-		$('.eventon_popup').on('click','.eventon_submit_license',function(){
+		$('body').on('click','.eventon_submit_license',function(){
 			
-			$('.eventon_popup').find('.message').removeClass('bad good');
+			$('.ajde_popup').find('.message').removeClass('bad good');
 			
 			var parent_pop_form = $(this).parent().parent();
 			var license_key = parent_pop_form.find('.eventon_license_key_val').val();
@@ -131,9 +131,9 @@ jQuery(document).ready(function($){
 											box.find('.status').html(content);
 											
 											show_pop_good_msg('<span class="EVOcheckmark"></span> Woo hoo! Purchase key verified and saved. Thank you for activating EventON!');
-											$('.eventon_popup').delay(3000).queue(function(n){
+											$('.ajde_popup').delay(3000).queue(function(n){
 												$(this).animate({'margin-top':'70px','opacity':0}).fadeOut();
-												$('#evo_popup_bg').fadeOut();
+												$('#ajde_popup_bg').fadeOut();
 												n();
 											});
 
@@ -153,8 +153,8 @@ jQuery(document).ready(function($){
 		});
 
 	// License Verification for EventON Addons
-		$('.eventon_popup').on('click','.eventonADD_submit_license',function(){			
-			$('.eventon_popup').find('.message').removeClass('bad good');
+		$('body').on('click','.eventonADD_submit_license',function(){			
+			$('.ajde_popup').find('.message').removeClass('bad good');
 			
 			var parent_pop_form = $(this).parent().parent();
 			var license_key = parent_pop_form.find('.eventon_license_key_val').val();
@@ -205,9 +205,9 @@ jQuery(document).ready(function($){
 											box.find('.status').html(data.content);
 											
 											show_pop_good_msg('Woo hoo! License key verified and saved. '+data.addition_msg);
-											$('.eventon_popup').delay(4000).queue(function(n){
+											$('.ajde_popup').delay(4000).queue(function(n){
 												$(this).animate({'margin-top':'70px','opacity':0}).fadeOut();
-												$('#evo_popup_bg').fadeOut();
+												$('#ajde_popup_bg').fadeOut();
 												n();
 											});
 
@@ -274,9 +274,9 @@ jQuery(document).ready(function($){
 						addon.find('.status').html(data.content);
 						
 						show_pop_good_msg('Successfully deactivated addon.');
-						$('.eventon_popup').delay(3000).queue(function(n){
+						$('.ajde_popup').delay(3000).queue(function(n){
 							$(this).animate({'margin-top':'70px','opacity':0}).fadeOut();
-							$('#evo_popup_bg').fadeOut();
+							$('#ajde_popup_bg').fadeOut();
 							n();
 						});
 						addon.removeClass('activated'); 
@@ -291,18 +291,18 @@ jQuery(document).ready(function($){
 
 	// popup lightbox functions
 		function show_pop_bad_msg(msg){
-			$('.eventon_popup').find('.message').removeClass('bad good').addClass('bad').html(msg).fadeIn();
+			$('.ajde_popup').find('.message').removeClass('bad good').addClass('bad').html(msg).fadeIn();
 		}
 		function show_pop_good_msg(msg){
-			$('.eventon_popup').find('.message').removeClass('bad good').addClass('good').html(msg).fadeIn();
+			$('.ajde_popup').find('.message').removeClass('bad good').addClass('good').html(msg).fadeIn();
 		}
 		
 		function show_pop_loading(){
-			$('.eventon_popup_text').css({'opacity':0.3});
-			$('#eventon_loading').fadeIn();
+			$('.ajde_popup_text').css({'opacity':0.3});
+			$('#ajde_loading').fadeIn();
 		}
 		function hide_pop_loading(){
-			$('.eventon_popup_text').css({'opacity':1});
-			$('#eventon_loading').fadeOut(20);
+			$('.ajde_popup_text').css({'opacity':1});
+			$('#ajde_loading').fadeOut(20);
 		}
 });

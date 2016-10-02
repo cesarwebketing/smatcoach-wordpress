@@ -34,18 +34,16 @@ class EVO_post_types{
 		/**
 		 * Taxonomies
 		 **/
-		do_action( 'eventon_register_taxonomy' );
-		
+		do_action( 'eventon_register_taxonomy' );		
 		
 		$evOpt = self::$evOpt;
-			
-		
+
 		$__capabilities = array(
-					'manage_terms' 		=> 'manage_eventon_terms',
-					'edit_terms' 		=> 'edit_eventon_terms',
-					'delete_terms' 		=> 'delete_eventon_terms',
-					'assign_terms' 		=> 'assign_eventon_terms',
-				);
+			'manage_terms' 		=> 'manage_eventon_terms',
+			'edit_terms' 		=> 'edit_eventon_terms',
+			'delete_terms' 		=> 'delete_eventon_terms',
+			'assign_terms' 		=> 'assign_eventon_terms',
+		);
 
 		register_taxonomy( 'event_location', 
 			apply_filters( 'eventon_taxonomy_objects_event_location', array('ajde_events') ),
@@ -54,8 +52,8 @@ class EVO_post_types{
 				'label' => __('Event Location','eventon'), 
 				'show_ui' => true,
 				'query_var' => true,
-				'capabilities'			=> $__capabilities,
-				'rewrite' => array( 'slug' => 'event-type' ) 
+				'capabilities'	=> $__capabilities,
+				'rewrite' => array( 'slug' => 'event-location' ) 
 			)) 
 		);
 		register_taxonomy( 'event_organizer', 
@@ -66,21 +64,15 @@ class EVO_post_types{
 				'show_ui' => true,
 				'query_var' => true,
 				'capabilities'			=> $__capabilities,
-				'rewrite' => array( 'slug' => 'event-type' ) 
+				'rewrite' => array( 'slug' => 'event-organizer' ) 
 			)) 
 		);
-
-
-
-		
 
 		// Event type custom taxonomy NAMES
 		$event_type_names = evo_get_ettNames($evOpt);
 
-
 		// for each activated event type category
 		for($x=1; $x<evo_get_ett_count($evOpt)+1; $x++){
-
 			$ab = ($x==1)? '':'_'.$x;
 			$ab2 = ($x==1)? '':'-'.$x;
 			$evt_name = $event_type_names[$x];
@@ -109,16 +101,9 @@ class EVO_post_types{
 				)) 
 			);
 		}
-
-
-		
-		
 	}
-
 	
-	/**
-	 * Register core post types
-	 */
+	/** Register core post types */
 	public static function register_post_types() {
 		if ( post_type_exists('ajde_events') )
 			return;
@@ -147,15 +132,12 @@ class EVO_post_types{
 					'supports' 				=> apply_filters('eventon_event_post_supports', array('title','author', 'editor','custom-fields','thumbnail','page-attributes')),
 					//'supports' 			=> array('title','editor','thumbnail','page-attributes'),
 					'menu_position' 		=> 15, 
-					'has_archive' 			=> true
+					'has_archive' 			=> true,
+					'taxonomies'			=> array('post_tag')
 				)
 			)
 		);
-
-		
 	}
-
-
 }
 
 new EVO_post_types();

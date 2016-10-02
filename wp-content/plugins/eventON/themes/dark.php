@@ -1,6 +1,7 @@
 <?php
 /**
- * @theme: Dark
+ * @theme: 		Dark
+ * @updated:	2.2.30
  */
 	
 $theme = array(
@@ -60,6 +61,15 @@ $theme = array(
 	'evose_3'=>'2C2C2C',
 	'evose_4'=>'4F4F4F',
 	'evose_5'=>'4F4F4F',
+
+	// single events addition
+	'evose_3'=>'2C2C2C',
+	'evose_4'=>'4F4F4F',
+	'evose_5'=>'4F4F4F',
+
+	// canceled events
+	'evcal__cancel_event_3'=>'2b2b2b',
+	'evcal__cancel_event_4'=>'383738',
 );
 
 ?>

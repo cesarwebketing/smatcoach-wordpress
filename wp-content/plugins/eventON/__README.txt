@@ -4,8 +4,8 @@ Plugin Name: EventON
 Author URI: http://ashanjay.com/
 Tags: calendar, event calendar, event posts
 Requires at least: 3.8
-Tested up to: 4.1
-Stable tag: 2.2.27
+Tested up to: 4.3
+Stable tag: 2.3.12
 
 Event calendar plugin for wordpress that utilizes WP's custom post type.  
 
@@ -19,11 +19,173 @@ Event calendar plugin for wordpress that utilizes WP's custom post type. This pl
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Changelog ==
+= 2.3.12 (2015-10-29)
+FIXED: Eventlist ext. addon compatibility
+FIXED: Shortcodes not executing inside event details
+FIXED: safari styles breaking for the rest of the site
+UPDATED: Go to today changed to current month - text change
+
+= 2.3.11 (2015-10-26) =
+ADDED: Ability to hide month arrows via shortcode per calendar
+ADDED: Option to align month navigation arrows to right side of the calendar
+ADDED: Pluggable filter to increase custom meta fields per event
+ADDED: Option to set featured image as a regular image
+ADDED: Ability to random order events
+ADDED: Ability to show events only to logged in users
+ADDED: Placehodler text for language month and date names
+ADDED: separate class name for past events
+ADDED: Event organizer archive template page
+ADDED: Ability to add custom paypal emails to invidual events
+ADDED: Learnmore link to CSV export events
+ADDED: Organizer external link field
+ADDED: Option for only admin and loggedin users can see custom meta fields
+FIXED: Google maps not working on some sections 
+FIXED: Add to google calendar desription showing title
+FIXED: Proper time passed to basic paypal checkout page
+FIXED: duplicate events save correct event link
+FIXED: Event organizer image not working from dropdown menu
+FIXED: Custom map styles preview image not working
+UPDATED: Removed max repeating times restriction
+UPDATED: Map zoom level control to location taxonomy page template
+UPDATED: New filter content function for event content
+UPDATED: Map zoom control not showing up
+UPDATED: Compatibility to eventList ext. addon v0.8
+UPDATED: Google cal add to calendar to have excerpt of event details
+UPDATED: All events wp-admin to show event times
+UPDATED: Placeholder text for language each item box
+UPDATED: Paypal settings box UI for event edit page
+REMOVED: eventbrite and meetup support
+
+= 2.3.10 (2015-9-21) =
+ADDED: Missing this month button appearance into settings
+FIXED: end time not saving correct on event edit page
+FIXED: Repeating events not saving correctly (thanks oliver from germany)
+FIXED: organizer image not to be a square but medium size
+FIXED: Eventtop event type not getting translated correctly
+FIXED: location and organizer images not working on taxonomy term pages
+FIXED: Colorpicker not loading right on event type term pages
+
+= 2.3.9 (2015-8-25) =
+FIXED: Compatibility with WP 4.3 widget error
+FIXED: error when language settings saving
+FIXED: Not able to feature events via star icon & other permission issues
+
+= 2.3.8 (2015-8-5) =
+FIXED: BCC email error on helper class
+FIXED: Time cutoff to wordpress site's local time
+UPDATED: Repeat intervals in eventon datetime class
+UPDATED: email helper class & removal of HTML email filter when finished
+UPDATED: to auto sync dynamic styles after update to new version
+
+= 2.3.7 (2015-7-22) =
+ADDED: Support for location cards for event locations
+FIXED: Event top tags showing regardless of settings
+FIXED: export events as CSV start time var name error
+FIXED: ics summary and description correctly specifying title
+FIXED: ics file summary going into new lines and breaking description
+FIXED: repeating events not linking correct to single events page
+FIXED: https error for chrome version 44
+UPDATED: Featured image responsive styles for mobile
+UPDATED: organizer field in language settings
+
+= 2.3.6 (2015-7-9) =
+ADDED: New AJDE library to help scaling of eventon
+FIXED: Organizer image not able to save
+FIXED: Repeating days of week not selected correct after save
+FIXED: Organizer contact field not saving correct
+FIXED: Custom meta data field titles not translating in event card
+FIXED: Tile styles
+FIXED: Slashes in location name
+UPDATED: Styles for tiles layout mobile view
+UPDATED: Event top event types be seperated by commas
+
+= 2.3.5 (2015-6-9) =
+FIXED: Individual event user interaction not working
+UPDATED: Eventon helper function to support bcc type emailing
+UPDATED: code yesno value for settings
+
+= 2.3.4 (2015-5-28) = 
+FIXED: Uninstall error
+FIXED: event edit page not showing event settings
+ 
+= 2.3.3 (2015-5-28) = 
+FIXED: repeat events custom not saving times correct
+FIXED: User interaction not working correct on tiles
+FIXED: new shortcode variable to show repeating events while hide multiple occurance of event is active
+UPDATED: POT language file with new and missing strings
+REMOVED: eventon shortcode button from wysiwyg editor due to multiple conflicts with themes
+
+= 2.3.2 (2015-5-20) =
+ADDED: Ability to hide individual data in event card
+ADDED: Support for event tags
+ADDED: Ability to style featured events from appearance
+ADDED: ability to sort events by posted date
+ADDED: Option to not delete eventon settings when deleting plugin
+ADDED: Ability to import and export language translations for eventon
+FIXED: fullcal and dailyview not moveing featured events up
+FIXED: Subscriber not showing for other views of calendar
+FIXED: Tile layout to allow single event page clicks
+UPDATED: Events tax in the calendar
+UPDATED: Users taxonomy for calendar
+UPDATED: minor code fixes
+UPDATED: font aweosme icons to version 4.3
+
+= 2.3.1 (2015-4-22) = 
+FIXED: Missing translation for go to today
+FIXED: Event Card not showing for single events page
+FIXED: Event type categories not working correct
+FIXED: Hide filtering options dropdowns
+UPDATED: Events linking to external links to not load event card HTML
+UPDATED: Missing event cancelled in language
+UPDATED: JQuery triggers for goto today button
+
+= 2.3 (2015-4-15) =
+ADDED: Tile based layout for event calendar
+ADDED: Timezone text support for event time
+ADDED: Go to today button for calendar to return to current month
+ADDED: Ability to export events 
+ADDED: Support for event type category archive page
+ADDED: Ability to add image for organizer
+UPDATED: Minor updates to javascript for eventon
+UPDATED: Re-organized files for plugin
+UPDATED: theme and styles to incorporated missing new elements
+UPDATED: ICS file slug causing errors
+FIXED: Foreach error on language tab for RSVP
+FIXED: Tooltip not showing up correct on page
+FIXED: Cancel event styles on lightbox version
+FIXED: google map not working off lat lon values
+FIXED: repeating interval url when first creating event
+FIXED: Year long events not appearing in addon versions
+
+= 2.2.29 (2015-3-27) =
+FIXED: Event location in eventcard and eventtop display errors
+FIXED: Filter not working error caused by small mistake
+
+= 2.2.28 (2015-3-25) =
+ADDED: location name to schema for event
+ADDED: shortened event description to ICS file instead of name
+ADDED: event type category terms language translation
+ADDED: Ability to remove meta data for eventon generator version
+ADDED: Ability to cancel events and show on calendar
+FIXED: NOT filter in shortcode not working when switching months
+FIXED: Calendar ux_val to override event ux_val
+FIXED: Event Paging setting to show all available pages
+UPDATED: Event card HTML to not load when not needed
+UPDATED: Addons not saving activations fixed
+UPDATED: Language translations for admin side
+UPDATED: Sorting custom repeat intervals on first save
+UPDAETD: Get directions to use https
+UPDATED: Improvement to code handling and reusage of code
+UPDATED: main lang translation function
+UPDATED: Support for event type translatable text
+UPDATED: POT file for admin translations
+
+
 = 2.2.27 (2015-2-24) =
+ADDED: Location name to schema data for events
 FIXED: Only featured events cal not working when switching months
 FIXED: Location image picker not working in event edit page
 UPDATED: Included class names for event type filter terms on frontend
-UPDATED: Addons not saving activations fixed
 
 = 2.2.26 (2015-2-14) =
 FIXED: Settings not saving correctly for eventon
