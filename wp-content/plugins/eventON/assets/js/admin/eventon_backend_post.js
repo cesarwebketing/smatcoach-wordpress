@@ -1,5 +1,5 @@
 /** 
- * @version  2.2.24
+ * @version  2.3.6
  */
 jQuery(document).ready(function($){
 
@@ -8,13 +8,13 @@ jQuery(document).ready(function($){
 
 	// meta box sections
 	// click hide and show
-		$('#evo_mb').on('click','.evomb_header',function(){
-			
-			var box = $(this).siblings('.evomb_body');
-			
+		$('#evo_mb').on('click','.evomb_header',function(){			
+			var box = $(this).siblings('.evomb_body');			
 			if(box.hasClass('closed')){
+				$(this).removeClass('closed');
 				box.slideDown('fast').removeClass('closed');
 			}else{
+				$(this).addClass('closed');
 				box.slideUp('fast').addClass('closed');
 			}
 			update_eventEdit_meta_boxes_values();
@@ -23,11 +23,9 @@ jQuery(document).ready(function($){
 		function update_eventEdit_meta_boxes_values(){
 			var box_ids ='';
 			
-			$('#evo_mb').find('.evomb_body').each(function(){
-				
+			$('#evo_mb').find('.evomb_body').each(function(){				
 				if($(this).hasClass('closed'))
 					box_ids+=$(this).attr('box_id')+',';
-				
 			});		
 			$('#evo_collapse_meta_boxes').val(box_ids);
 		}
@@ -44,8 +42,11 @@ jQuery(document).ready(function($){
 				$('#evo_location_tax').val( option.data('tid')  );
 
 				$('#evo_loc_img_id').val( option.data('loc_img_id')  );
-				$('.evo_metafield_image .evo_loc_image_src img').attr('src', option.data('loc_img_src') ).fadeIn();
-
+				if(option.data('loc_img_src')){
+					$('.evo_metafield_image .evo_loc_image_src img').attr('src', option.data('loc_img_src') ).fadeIn();
+				}else{
+					$('.evo_metafield_image .evo_loc_image_src img').fadeOut();
+				}
 			}
 		});
 
@@ -56,8 +57,14 @@ jQuery(document).ready(function($){
 			if($(this).val()!=''){
 				$('#evcal_organizer_name').val( $(this).val());
 				$('#evcal_org_contact').val( option.data('contact')  );
-				$('#evcal_org_img').val( option.data('img')  );	
-				$('#evo_organizer_tax_id').val( option.data('tid')  );	
+				$('#evo_org_img_id').val( option.data('img')  );	
+				$('#evo_organizer_tax_id').val( option.data('tid')  );
+
+				if(option.data('imgsrc')){
+					$('.evo_metafield_image .evo_org_image_src img').attr('src', option.data('imgsrc') ).fadeIn();	
+				}else{
+					$('.evo_metafield_image .evo_org_image_src img').fadeOut();
+				}
 			}
 		});
 
@@ -173,7 +180,7 @@ jQuery(document).ready(function($){
 			}
 		}
 		
-	/** 	User interaction meta field 	 **/
+	/** User interaction meta field 	 **/
 		// new window
 		$('#evo_new_window_io').click(function(){
 			var curval = $(this).hasClass('selected');
@@ -215,16 +222,7 @@ jQuery(document).ready(function($){
 			}
 		});
 		
-	// repeating events UI
-		$('#evd_repeat').click(function(){
-			// yes
-			if($(this).hasClass('NO')){
-				$('.evcalr_2').slideDown();
-			}else{
-				$('.evcalr_2').slideUp();
-			}
-		});
-
+	// repeating events UI	
 		// frequency
 		$('#evcal_rep_freq').change(function(){
 			var field = $(this).find("option:selected").attr('field');
@@ -330,9 +328,18 @@ jQuery(document).ready(function($){
 				$('.evo_enddate_selection').animate({'opacity':'1'});
 			}
 		});
+	// All day or not
+		$('#evcal_allday_yn_btn').click(function(){
+			// yes
+			if($(this).hasClass('NO')){
+				$('.evcal_time_selector').animate({'opacity':'0.5'});
+				//$('#evo_dp_to').attr({'value':''});
+			}else{
+				$('.evcal_time_selector').show().animate({'opacity':'1'});
+			}
+		});
 		
-	//date picker on 
-		
+	//date picker on		
 		$('#evo_dp_from').datepicker({ 
 			dateFormat: date_format,
 			numberOfMonths: 2,
@@ -359,37 +366,6 @@ jQuery(document).ready(function($){
 			onClose: function( selectedDate ) {
 	        	$( "#evo_dp_from" ).datepicker( "option", "maxDate", selectedDate );
 	      	}
-		});
-	
-	
-
-	// yes no buttons in event edit page
-		$('.evo_yn_btn').on( 'click',function(){
-			// yes
-			if($(this).hasClass('NO')){
-				$(this).removeClass('NO');
-				$(this).siblings('input').val('yes');
-				
-				if($(this).attr('allday_switch')=='1'){
-					$('.evcal_time_selector').hide();
-				}
-
-				// afterstatment
-				var type = ($(this).attr('as_type')=='class')? '.':'#';
-				$(type+$(this).attr('afterstatement')).slideDown();
-
-			}else{//no
-				$(this).addClass('NO');
-				$(this).siblings('input').val('no');
-				
-				if($(this).attr('allday_switch')=='1'){
-					$('.evcal_time_selector').show(); 
-				}
-
-				var type = ($(this).attr('as_type')=='class')? '.':'#';
-				$(type+$(this).attr('afterstatement')).slideUp();
-			}
-			
 		});
 	
 	// eventbrite

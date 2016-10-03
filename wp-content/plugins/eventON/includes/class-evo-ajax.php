@@ -7,7 +7,7 @@
  * @author 		AJDE
  * @category 	Core
  * @package 	EventON/Functions/AJAX
- * @version     2.2.20
+ * @version     2.3.11
  */
 
 class evo_ajax{
@@ -27,6 +27,7 @@ class evo_ajax{
 			'remote_validity'=>'remote_validity',
 			'deactivate_addon'=>'deactivate_addon',
 			'remote_test'=>'remote_test',
+			'export_events'=>'export_events',
 		);
 		foreach ( $ajax_events as $ajax_event => $class ) {
 
@@ -104,6 +105,7 @@ class evo_ajax{
 						( !empty($evodata['ev_cnt'])? $evodata['ev_cnt']: '' ),
 					'filters'=>((isset($_POST['filters']))? $_POST['filters']:null)
 				);
+				//print_r($eve_args);
 			
 			// shortcode arguments USED to build calendar
 				$shortcode_args_arr = $_POST['shortcode'];
@@ -117,15 +119,17 @@ class evo_ajax{
 				}else{
 					$lang ='';
 				}
+				
 					
 			// GET calendar header month year values
 				$calendar_month_title = get_eventon_cal_title_month($focused_month_num, $focused_year, $lang);
 					
 			// AJAX Addon hook
 				$eve_args = apply_filters('eventon_ajax_arguments',$eve_args, $_POST);
-							
+
+			// Calendar content		
 			$content_li = $eventon->evo_generator->eventon_generate_events( $eve_args);
-			
+
 			
 			// RETURN VALUES
 			// Array of content for the calendar's AJAX call returned in JSON format
@@ -160,7 +164,17 @@ class evo_ajax{
 			$event_end_unix = (!empty($eunix))? $eunix : $sunix;
 			
 			
-			$name = get_the_title($event_id);
+			$name = $summary = get_the_title($event_id);
+
+			// summary for ICS file
+			$event = get_post($event_id);
+			$content = (!empty($event->post_content))? $event->post_content:'';
+			if(!empty($content)){
+				$content = strip_tags($content);
+				$content = str_replace(']]>', ']]&gt;', $content);
+				$summary = wp_trim_words($content, 50, '[..]');
+				//$summary = substr($content, 0, 500).' [..]';
+			}			
 			
 			
 			$location = (!empty($ev_vals['evcal_location']))? $ev_vals['evcal_location'][0] : ''; 
@@ -171,7 +185,8 @@ class evo_ajax{
 			
 			ob_clean();
 			
-			$slug = strtolower(str_replace(array(' ', "'", '.'), array('_', '', ''), $name));
+			//$slug = strtolower(str_replace(array(' ', "'", '.'), array('_', '', ''), $name));
+			$slug = $event->post_name;
 			
 			
 			header("Content-Type: text/Calendar; charset=utf-8");
@@ -187,10 +202,141 @@ class evo_ajax{
 			echo "DTEND:{$end}\n";
 			echo "LOCATION:{$location}\n";
 			echo "SUMMARY:{$name}\n";
-			echo "DESCRIPTION: {$name}\n";
+			echo "DESCRIPTION: {$summary}\n";
 			echo "END:VEVENT\n";
 			echo "END:VCALENDAR";
 			exit;
+		}
+
+	// export events as CSV
+	// @version 2.2.30
+		function export_events(){
+			header("Content-type: text/csv");
+			header("Content-Disposition: attachment; filename=Eventon_events_".date("d-m-y").".csv");
+			header("Pragma: no-cache");
+			header("Expires: 0");
+
+			$evo_opt = get_option('evcal_options_evcal_1');
+			$event_type_count = evo_get_ett_count($evo_opt);
+			$cmd_count = evo_calculate_cmd_count($evo_opt);
+
+			$fields = apply_filters('evo_csv_export_fields',array(
+				'publish_status',				
+				'evcal_event_color'=>'color',
+				'event_name',				
+				'event_description','event_start_date','event_start_time','event_end_date','event_end_time',
+
+				'evcal_allday'=>'all_day',
+				'evo_hide_endtime'=>'hide_end_time',
+				'evcal_gmap_gen'=>'event_gmap',
+				'_featured'=>'featured',
+
+				'evcal_location_name'=>'location_name',
+				'evcal_location'=>'event_location',				
+				'evcal_organizer'=>'event_organizer',
+				'evcal_subtitle'=>'evcal_subtitle',
+				'evcal_lmlink'=>'learnmore link',
+				'image_url'
+			));
+			
+			foreach($fields as $var=>$val){	echo $val.',';	}
+
+			// event types
+				for($y=1; $y<=$event_type_count;  $y++){
+					$_ett_name = ($y==1)? 'event_type': 'event_type_'.$y;
+					echo $_ett_name.',';
+				}
+			// for event custom meta data
+				for($z=1; $z<=$cmd_count;  $z++){
+					$_cmd_name = 'cmd_'.$z;
+					echo $_cmd_name.",";
+				}
+
+			echo "\n";
+ 
+			$events = new WP_Query(array(
+				'posts_per_page'=>-1,
+				'post_type' => 'ajde_events',
+				'post_status'=>'any'			
+			));
+
+			if($events->have_posts()):
+				date_default_timezone_set('UTC');
+
+				while($events->have_posts()): $events->the_post();
+					$__id = get_the_ID();
+					$pmv = get_post_meta($__id);
+
+					echo get_post_status($__id).",";
+					//echo (!empty($pmv['_featured'])?$pmv['_featured'][0]:'no').",";
+					echo (!empty($pmv['evcal_event_color'])? $pmv['evcal_event_color'][0]:'').",";
+					echo '"'.get_the_title().'",';
+					$event_content = get_the_content();
+					echo '"'.str_replace('"', "'", $event_content).'",';
+
+					// start time
+						$start = (!empty($pmv['evcal_srow'])?$pmv['evcal_srow'][0]:'');
+						if(!empty($start)){
+							echo date('n/j/Y,g:i:A', $start).',';
+						}else{ echo "'','',";	}
+
+					// end time
+						$end = (!empty($pmv['evcal_erow'])?$pmv['evcal_erow'][0]:'');
+						if(!empty($end)){
+							echo date('n/j/Y,g:i:A',$end).',';
+						}else{ echo "'','',";	}
+
+					foreach($fields as $var=>$val){
+						
+						// yes no values
+						if(in_array($val, array('featured','all_day','hide_end_time','event_gmap'))){
+							echo ( (!empty($pmv[$var]) && $pmv[$var][0]=='yes') ? 'yesf': 'no').',';
+						}
+
+						// skip fields
+						if(in_array($val, array('featured','all_day','hide_end_time','event_gmap','color','publish_status','event_name','event_description','event_start_date','event_start_time','event_end_date','event_end_time'))) continue;
+
+						// image
+						if($val =='image_url'){
+							$img_id =get_post_thumbnail_id($__id);
+							if($img_id!=''){
+								$img_src = wp_get_attachment_image_src($img_id,'full');
+								echo $img_src[0].",";
+							}else{ echo ",";}
+						}else{
+							echo (!empty($pmv[$var])? 	'"'.$pmv[$var][0].'"':'').",";
+						}
+					}
+
+					// event types
+						for($y=1; $y<=$event_type_count;  $y++){
+							$_ett_name = ($y==1)? 'event_type': 'event_type_'.$y;
+							$terms = get_the_terms( $__id, $_ett_name );
+
+							if ( $terms && ! is_wp_error( $terms ) ){
+								echo '"';
+								foreach ( $terms as $term ) {
+									echo $term->term_id.',';
+								}
+								echo '",';
+							}else{ echo ",";}
+						}
+					// for event custom meta data
+						for($z=1; $z<=$cmd_count;  $z++){
+							$cmd_name = '_evcal_ec_f'.$z.'a1_cus';
+							echo (!empty($pmv[$cmd_name])? 
+								'"'.str_replace('"', "'",$pmv[$cmd_name][0]).'"'
+								:'');
+							echo ",";
+						}
+
+					echo "\n";
+
+				endwhile;
+
+			endif;
+
+			wp_reset_postdata();
 		}
 
 	// Activate EventON Product
@@ -366,7 +512,7 @@ class evo_ajax{
 
 			if ( ! is_admin() ) die;
 
-			if ( ! current_user_can('edit_eventon') ) wp_die( __( 'You do not have sufficient permissions to access this page.', 'eventon' ) );
+			if ( ! current_user_can('edit_eventons') ) wp_die( __( 'You do not have sufficient permissions to access this page.', 'eventon' ) );
 
 			if ( ! check_admin_referer('eventon-feature-event')) wp_die( __( 'You have taken too long. Please go back and retry.', 'eventon' ) );
 

@@ -3,14 +3,7 @@
 	// version: 0.2
 ?>
 <div id="evcal_5" class="postbox evcal_admin_meta">	
-	<?php 	if($eventon->is_eventon_activated()): ?>
-		<div id='chatbox' style='display:none'>
-			<div id='chatIN'>
-				<div id='chatcontent'></div>
-			</div>
-		</div>
-		<div id='chatboxB' style='display:none'></div>
-	<?php endif;?>
+	
 	<div class="inside eventon_settings_page">
 		<h2 class='heading tac' style=''>EventON Documentation</h2>
 		
@@ -21,30 +14,47 @@
 				<input type="submit" alt="Search" value="Search" />
 			</form>
 		</div>
-		<p style=' margin-bottom:25px'><i>NOTE: Please feel free to type in your question and search our documentation library for related answeres</i></p>
+		<p style=' margin-bottom:25px; text-align:center'><i>NOTE: Please feel free to type in your question and search our documentation library for related answeres</i></p>
 
-		
-		<a id='evo_livechat' class='evo_support_box special' href='http://www.myeventon.com/support/' target='_blank'>
-			<h3>Real-time Chat Support</h3>
-			<p>Yes! you can ask any support related questions from us using the live chat support. This is free of charge. Please do remember that our availability varies on this chat. Look forward to answering your questions!</p>
-		</a>
-		
-		<a class='evo_support_box' href='http://support.ashanjay.com/forum/eventon/' target='_blank'>
+		<div class='evo_support_box evo_troubleshoot'>
+			<h2>Having issues with EventON? <a class='btn' href='http://www.myeventon.com/documentation/check-eventon-working/' target='_blank'>Troubleshoot Guide to Eventon</a></h2>
+			<p>Read our <a href='http://www.myeventon.com/documentation/check-eventon-working/' target='_blank'>troubleshooting guide</a> and identify your issue and apply common solutions to solve the issues before contacting us.</p>
+		</div>
+
+		<a class='evo_support_box special' href='http://support.ashanjay.com/forum/eventon/' target='_blank'>
 			<h3>Official Support Forum</h3>
-			<p>Hope you understand that we can not be online all the time, when that happen you can use our official support forum and we can get back to you faster and track your issues all the way.</p>
+			<p>This is our official support forum. Please feel free to search for already asked questions and ask your support questions for our help.</p>
 		</a>
+
+		<a class='evo_support_box ' href='http://codecanyon.net/item/eventon-wordpress-event-calendar-plugin/1211017/comments' target='_blank'>
+			<h3>Codecanyon Message Board</h3>
+			<p>If you are having trouble registering for support forum you can write your support questions on codecanyon message board for eventon.</p>
+		</a>
+		
 
 		<a class='evo_support_box twitter' href='http://www.twitter.com/myeventon' target='_blank'>
 			<h3>Follow us on twitter @myeventon</h3>
-			<p>You can get the latest updates, other news, tips and tricks for eventON via our twitter stream. You can also use this to ask quick questions (specially when chat if offline)</p>
+			<p>You can get the latest updates, other news, tips and tricks for eventON via our twitter stream. You can also use this to ask quick questions</p>
 		</a>
+
+		<h3 style='padding-bottom:10px'>Video Tutorials on using EventON</h3>
+		<p>
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/ijgMkKrdZfc" frameborder="0" allowfullscreen></iframe>
+		</p><p>
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/TTbBHZzlQew" frameborder="0" allowfullscreen></iframe>
+		</p><p>
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/0dod0m3Flvg" frameborder="0" allowfullscreen></iframe>
+		</p>
+		<p>
+			<a href="http://www.myeventon.com/support/video-tutorials/" class='evo_admin_btn btn_prime' target="_blank">Rest of Video Tutorials</a>
+		</p>
 		
 
 		
 		
 		
 
-		<h4><a href='http://www.myeventon.com/documentation/frequently-asked-questions/' target='_blank'>FAQ</a></h4>
+		<h4><a class='evo_admin_btn btn_prime' href='http://www.myeventon.com/documentation/frequently-asked-questions/' target='_blank'>FAQ</a></h4>
 		<h4>Getting Started</h4>		
 		<p><a href='http://www.myeventon.com/documentation/getting-started-with-eventon-adding-events/' target='_blank'>How to add events to calendar</a></p>
 		<p><a href='http://www.myeventon.com/documentation/adding-calendar-to-site/' target='_blank'>How to add eventON calendar to pages</a></p>
@@ -60,44 +70,5 @@
 		
 		
 	</div>
-	
-<?php 	if($eventon->is_eventon_activated()): ?>
 
-<script type="text/javascript">
-jQuery(document).ready(function($){
-	$('#evo_livechat').on('click', function(){
-		
-		$('#chatbox').fadeIn();
-		$('#chatboxB').fadeIn();
-
-		var el = document.createElement("iframe");
-		var ob = document.getElementById('chatcontent');
-		el.setAttribute('id', 'ifrm');
-		ob.appendChild(el);
-		el.setAttribute('src', 'http://www.myeventon.com/support/chat/');
-		el.style.scrolling= 'no';
-		var el_ = $(el);
-		el_.css({'border':'0', 'height':'405px','width':'413px','overflow':'hidden','background':'transparent','z-index':'10000','position':'relative'});
-
-		return false;
-	});
-
-
-	$(document).mouseup(function (e){
-		var container=$('#chatcontent');
-		
-			if (!container.is(e.target) // if the target of the click isn't the container...
-				&& e.pageX < ($(window).width() - 30)
-			&& container.has(e.target).length === 0) // ... nor a descendant of the container
-			{
-				$('#chatbox').fadeOut();
-				$('#chatboxB').fadeOut();
-			}
-		
-	});
-
-	
-});
-</script>	
-<?php endif;?>
 </div>

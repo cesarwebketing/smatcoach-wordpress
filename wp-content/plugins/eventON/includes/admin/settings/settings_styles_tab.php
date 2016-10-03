@@ -29,7 +29,7 @@
 				?></textarea>				
 			</tr>		
 		</table>
-		<p><i>NOTE: These styles will update everytime you make changes in eventon appearance settings</i></p>		
+		<p><i><?php _e('NOTE: These styles will update everytime you make changes in eventon appearance settings','eventon');?></i></p>		
 	</div>
 </div>
 <input type="submit" class="evo_admin_btn btn_prime" value="<?php _e('Save Changes') ?>" />

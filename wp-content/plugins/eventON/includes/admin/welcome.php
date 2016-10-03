@@ -253,7 +253,7 @@ class EVO_Welcome_Page {
 			</div>
 
 			<div class='evow_credits'>
-				<p style='text-transform:uppercase; font-size:20px; margin:0; padding-bottom:3px;'><a href='http://www.ashanjay.com' target='_blank'>AshanJay Product</a></p>
+				<p style='text-transform:uppercase; font-size:20px; margin:0; padding-bottom:3px;'><a href='http://www.ashanjay.com' target='_blank'>Product of AshanJay Designs LLC</a></p>
 				<p style='text-transform:uppercase; opacity:0.7; margin:0; color:#fff'>Made in Portland, OR</p>
 			</div>			
 		<?php
@@ -364,6 +364,7 @@ class EVO_Welcome_Page {
 				//wp_safe_redirect( admin_url( 'index.php?page=evo-about&evo-updated=true' ) );
 			
 			wp_safe_redirect( admin_url( 'index.php?page=evo-about' ) );
+			eventon_generate_options_css(); // update dynamic styles as well - 2.3.8
 				
 			
 			exit;

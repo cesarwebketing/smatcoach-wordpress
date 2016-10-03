@@ -1,10 +1,7 @@
-/*
-	
-	EventON Generate Google maps function
-
-*/
-
-
+/**
+ * EventON Generate Google Maps Function
+ * @version  0.2
+ */
 (function($){
 	$.fn.evoGenmaps = function(opt){
 		
@@ -21,42 +18,41 @@
 		
 
 		// popup lightbox generation
-		if(options._action=='lightbox'){
+			if(options._action=='lightbox'){
 
-			var cur_window_top = parseInt($(window).scrollTop()) + 50;
-			$('.evo_popin').css({'margin-top':cur_window_top});
-			
-			$('.evo_pop_body').html('');
+				var cur_window_top = parseInt($(window).scrollTop()) + 50;
+				$('.evo_popin').css({'margin-top':cur_window_top});
+				
+				$('.evo_pop_body').html('');
 
-			var event_list = this.closest('.eventon_events_list');
-			var content = this.siblings('.event_description').html();
-			var content_front = this.html();
-			
-			var _content = $(content).not('.evcal_close');
-			
+				var event_list = this.closest('.eventon_events_list');
+				var content = this.siblings('.event_description').html();
+				var content_front = this.html();
+				
+				var _content = $(content).not('.evcal_close');
+				
 
-			// RTL
-			if(event_list.hasClass('evortl')){
-				$('.evo_popin').addClass('evortl');
+				// RTL
+				if(event_list.hasClass('evortl')){
+					$('.evo_popin').addClass('evortl');
+				}
+			
+				$('.evo_pop_body').append('<div class="evopop_top">'+content_front+'</div>').append(_content);
+				
+				var this_map = $('.evo_pop_body').find('.evcal_gmaps');
+				var idd = this_map.attr('id');
+				this_map.attr({'id':idd+'_evop'});
+				
+				$('.evo_popup').fadeIn(300);
+				$('.evo_popbg').fadeIn(300);
+
+				// check if gmaps should run
+				if( this.attr('data-gmtrig')=='1' && this.attr('data-gmap_status')!='null'){
+				
+					var cal = this.closest('div.ajde_evcal_calendar ');
+					loadl_gmaps_in(this, cal, idd+'_evop');
+				}
 			}
-		
-			$('.evo_pop_body').append('<div class="evopop_top">'+content_front+'</div>').append(_content);
-			
-			var this_map = $('.evo_pop_body').find('.evcal_gmaps');
-			var idd = this_map.attr('id');
-			this_map.attr({'id':idd+'_evop'});
-			
-			$('.evo_popup').fadeIn(300);
-			$('.evo_popbg').fadeIn(300);
-
-			// check if gmaps should run
-			if( this.attr('data-gmtrig')=='1' && this.attr('data-gmap_status')!='null'){
-			
-				var cal = this.closest('div.ajde_evcal_calendar ');
-				loadl_gmaps_in(this, cal, idd+'_evop');
-			}
-
-		}
 
 		// functions
 			if(options.fnt==1){
@@ -83,8 +79,7 @@
 					load_googlemaps_here(this);
 				}else{
 					setTimeout(load_googlemaps_here, options.delay, this);
-				}
-					
+				}					
 			}
 			if(options.fnt==3){
 				loadl_gmaps_in(this, options.cal, '');			
@@ -93,15 +88,11 @@
 			// gmaps on popup
 			if(options.fnt==4){
 				// check if gmaps should run
-				if( this.attr('data-gmtrig')=='1' && this.attr('data-gmap_status')!='null'){
-				
+				if( this.attr('data-gmtrig')=='1' && this.attr('data-gmap_status')!='null'){				
 					var cal = this.closest('div.ajde_evcal_calendar ');
 					loadl_gmaps_in(this, cal, options.mapSpotId);
-				}			
-				
-			}
-
-	
+				}	
+			}	
 		
 		// function to load google maps for eventcard
 		function load_googlemaps_here(obj){
@@ -113,11 +104,8 @@
 			
 			if( obj.attr('data-gmtrig')=='1' && obj.attr('data-gmap_status')!='null'){
 				loadl_gmaps_in(obj, cal, '');				
-			}			
-				
-
-		}
-		
+			}	
+		}		
 		
 		// Load the google map on the object
 		function loadl_gmaps_in(obj, cal, mapId){
@@ -138,8 +126,7 @@
 
 			var map_canvas_id= (mapId!=='')?
 				mapId:
-				obj.siblings('.event_description').find('.evcal_gmaps').attr('id');
-				
+				obj.siblings('.event_description').find('.evcal_gmaps').attr('id');				
 				
 			// google maps styles
 			// @since 2.2.22
@@ -148,24 +135,16 @@
 			if(gmapstyles != 'default'){
 				styles = $.parseJSON(gmapstyles);
 			}
-			
-
-
 
 			var zoom = evodata.data('mapzoom');
 			var zoomlevel = (typeof zoom !== 'undefined' && zoom !== false)? parseInt(zoom):12;
 			
 			var scroll = evodata.data('mapscroll');	
-			//console.log(map_canvas_id+' '+mapformat+' '+ location_type +' '+scroll +' '+ address);
-			
+			//console.log(map_canvas_id+' '+mapformat+' '+ location_type +' '+scroll +' '+ address);			
 								
 			//obj.siblings('.event_description').find('.evcal_gmaps').html(address);
 			initialize(map_canvas_id, address, mapformat, zoomlevel, location_type, scroll, styles);
-
-			
 		}
-		
-		
 		
 		//console.log(options);
 		

@@ -11,6 +11,11 @@
  */
 if( !defined('WP_UNINSTALL_PLUGIN') ) exit();
 
+$evo_opt = get_option('evcal_options_evcal_1');
+
+if(!empty($evo_opt['evo_donot_delete']) && $evo_opt['evo_donot_delete']=='yes')
+	exit();
+
 global $wpdb, $wp_roles;
 
 // Delete options

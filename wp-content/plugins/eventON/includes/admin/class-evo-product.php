@@ -251,7 +251,7 @@ class evo_product{
 			}
 		}
 		public function get_license(){
-			if(!empty($this->products[$this->slug])){
+			if(!empty($this->products[$this->slug]) && !empty($this->products[$this->slug]['key'])){
 				return $this->products[$this->slug]['key'];
 			}else{return false;}
 		}
@@ -301,6 +301,12 @@ class evo_product{
 
 		// checking for updates
 		public function can_check_remotely(){
+
+			// if doing force check then proceed
+			// @added 2.2.28
+			 if(!empty($_REQUEST['force-check']) && $_REQUEST['force-check']=='1')
+			 	return true;
+
 			if(!empty($this->products[$this->slug]) && !empty($this->products[$this->slug]['lastchecked'])){
 
 				date_default_timezone_set("UTC");

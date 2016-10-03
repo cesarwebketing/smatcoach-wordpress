@@ -15,7 +15,7 @@ function initialize(map_canvas_id, address,mapformat, zoom_level, location_type,
 	var map;
 	geocoder = new google.maps.Geocoder();
 			
-	var latlng = new google.maps.LatLng(-34.397, 150.644);	
+	var latlng = new google.maps.LatLng(45.524732, -122.677031);	
 
 	if(scrollwheel==false ){
 		var myOptions = {			
@@ -23,14 +23,16 @@ function initialize(map_canvas_id, address,mapformat, zoom_level, location_type,
 			mapTypeId:mapformat,	
 			zoom: zoom_level,	
 			scrollwheel: false,
-			styles: styles
+			styles: styles,
+			zoomControl:true
 		}
 	}else{
 		var myOptions = {	
 			center: latlng,	
 			mapTypeId:mapformat,	
 			zoom: zoom_level,
-			styles: styles
+			styles: styles,
+			zoomControl:true
 		}
 	}
 	
@@ -56,25 +58,22 @@ function initialize(map_canvas_id, address,mapformat, zoom_level, location_type,
 				//map.setCenter(results[0].geometry.location);
 				map.setCenter(marker.getPosition());
 				//console.log(results[0].geometry.location);
-			} else {
+			} else {				
 				document.getElementById(map_canvas_id).style.display='none';
 			}
 		});
 		
 	}else if(address==''){
-		console.log('t');
+		//console.log('t');
 	}else{
 		geocoder.geocode( { 'address': address}, function(results, status) {
-			if (status == google.maps.GeocoderStatus.OK) {
-				
-				
+			if (status == google.maps.GeocoderStatus.OK) {		
 				//console.log('map '+results[0].geometry.location);
 				map.setCenter(results[0].geometry.location);
 				var marker = new google.maps.Marker({
 					map: map,
 					position: results[0].geometry.location
-				});
-				
+				});				
 				
 			} else {
 				document.getElementById(map_canvas_id).style.display='none';				
