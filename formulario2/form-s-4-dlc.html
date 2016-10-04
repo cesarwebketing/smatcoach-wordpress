@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Documento sin título</title>
+<link rel="stylesheet" type="text/css" href="http://www.pruebas.webketing.cl/smartcoach/wp-content/themes/jollyany/css/colors.css" />
+<link rel="stylesheet" type="text/css" href="http://www.pruebas.webketing.cl/smartcoach/wp-content/themes/jollyany/style.css" />
+
+<script type="text/javascript"> 
+function validacion(formulario) {
+
+	if(formulario.first_name.value.length==0) { //comprueba que no esté vacío
+    formulario.first_name.focus();   
+    alert('El Nombre debe ser escrito correctamente'); 
+    return false; //devolvemos el foco
+  }
+
+	if(formulario.last_name.value.length==0) { //comprueba que no esté vacío
+    formulario.last_name.focus();   
+    alert('El Apellido debe ser escrito correctamente'); 
+    return false; //devolvemos el foco
+  }
+  
+  if(formulario.email.value.indexOf('@') == -1) { //comprueba que no esté vacío
+    formulario.email.focus();
+    alert('El E-mail debe ser escrito correctamente');
+    return false;
+  }
+  
+  if(isNaN(parseInt(formulario.phone.value))) {  //comprueba que no esté vacío
+    formulario.phone.focus();
+    alert('El telefono debe ser escrito correctamente');
+    return false;
+  }
+    
+}
+</script>
+<style>
+body{background: #e3e6ea;}
+.for-final-2 {
+    width: auto;
+    padding: 0px 9%;
+    color: #fff;
+}
+.for-final .col-50 {
+    width: 48%;
+    float: left;
+    padding: 0px 1%;
+}
+.for-final-2 textarea {
+    width: 99%;
+	font-size: 14px;
+	height: 64px;
+	padding: 9px 0px 9px 8px;}
+	
+.for-final-2 input {
+    font-size: 14px;
+	 padding: 8px 0px 8px 8px;
+	 width: 99%;
+	 border: 0px;
+}
+.for-final-2 select {
+  font-size: 14px;
+  padding: 9px 0px 9px 8px;
+  border: 0px;
+  width: 102%;
+
+}
+.for-final .btn-primary {
+    margin: 0px 39%;}
+	
+</style>
+
+</head>
+
+<body>
+
+<div id="formulario" class="for-final-2">
+<!--  ----------------------------------------------------------------------  -->
+<!--  NOTA: Agregue el siguiente <META> elemento a su página <HEAD>.  Si es   -->
+<!--  preciso, modifique el parámetro charset para especificar el conjunto    -->
+<!--  de caracteres de su página HTML.                                        -->
+<!--  ----------------------------------------------------------------------  -->
+
+<META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+<!--  ----------------------------------------------------------------------  -->
+<!--  NOTA: Agregue el siguiente <FORM> elemento a su página.                 -->
+<!--  ----------------------------------------------------------------------  -->
+
+<form action="https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8" method="POST" onsubmit="return validacion(this)" target="_parent">
+
+<input type=hidden name="oid" value="00D61000000etST">
+<input type=hidden name="retURL" value="http://smartcoach.global/gracias-landing/">
+
+<!--  ----------------------------------------------------------------------  -->
+<!--  NOTA: Estos campos son elementos de depuración opcionales. Elimine      -->
+<!--  los comentarios de estas líneas si desea realizar una prueba en el      -->
+<!--  modo de depuración.                                                     -->
+<!--  <input type="hidden" name="debug" value=1>                              -->
+<!--  <input type="hidden" name="debugEmail"                                  -->
+<!--  value="isaias@smartcoach.global">                                       -->
+<!--  ----------------------------------------------------------------------  -->
+
+<div class="col-100">
+<label for="first_name"></label><input name="first_name" type="text"  id="first_name" size="20" maxlength="40" placeholder="Nombre" />
+<br>
+<label for="first_name"></label>
+<input name="last_name" type="text"  id="last_name" size="20" maxlength="80"  placeholder="Apellido"/>
+<br>
+<label for="first_name"></label>
+<input name="email" type="text"  id="email" size="20" maxlength="80" placeholder="E-mail" />
+<br>
+<label for="first_name"></label>
+<input name="phone" type="text"  id="phone" size="20" maxlength="40" placeholder="Teléfono" />
+<br> </div>
+<div class="col-100">
+<label for="first_name"></label>
+<select  id="00N6100000BE9Eo" name="00N6100000BE9Eo" title="Interés Específico" >
+<option value="DLC">Diplomado Internacional en Coaching, Mención en Life Coaching</option>
+</select>
+<br>
+<label for="first_name"></label>
+<select  id="00N6100000BE9EU" name="00N6100000BE9EU"  title="País"><option value="">País:</option><option value="Chile">Chile</option>
+<option value="Colombia">Colombia</option>
+<option value="Perú">Perú</option>
+<option value="Bolivia">Bolivia</option>
+<option value="Brasil">Brasil</option>
+<option value="España">España</option>
+<option value="Venezuela">Venezuela</option>
+<option value="Mexico">Mexico</option>
+<option value="Argentina">Argentina</option>
+</select>
+<br>
+<label for="first_name"></label>
+<textarea name="description" placeholder="Deseo recibir información detallada sobre..."></textarea>
+<br>
+</div>
+<input name="submit" type="submit" value="Recibir Información" class="btn-primary">
+</form>
+</div>
+
+
+</body>
+
+</html>
